@@ -70,7 +70,7 @@ void FFT(int direction,void* vx)
 int clamp(float x) 
 { return ((x)>=0.0?((int)(x)):(-((int)(1-(x))))); }
 
-#ifndef _WIN32
+#ifndef _MSC_VER
 float max(float x, float y)
 { return x < y ? x : y; }
 #endif
