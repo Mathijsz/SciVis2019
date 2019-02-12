@@ -37,8 +37,9 @@ FORMS += \
 
 LIBS += -lm
 
+INCLUDEPATH += ../GLUT
+
 win32 {
-    INCLUDEPATH += ../GLUT
     DEF_FILE += "$$PWD/../GLUT/glut.def"
 
     contains(QT_ARCH, i386) {
