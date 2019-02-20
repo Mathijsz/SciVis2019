@@ -24,6 +24,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
+# Needed for freeglut
+DEFINES += TARGET_HOST_MS_WINDOWS X_DISPLAY_MISSING FREEGLUT_STATIC
+
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
@@ -37,24 +40,14 @@ FORMS += \
 
 LIBS += -lm
 
-INCLUDEPATH += ../GLUT
-
-win32 {
-    DEF_FILE += "$$PWD/../GLUT/glut.def"
-
-    contains(QT_ARCH, i386) {
-        LIBS += "$$PWD/../GLUT/glut32.dll"
-    } else {
-        LIBS += "$$PWD/../GLUT/glut64.dll"
-    }
-    LIBS += -lopengl32 -lglu32
-}
-else:LIBS += -lglut -lGL -lGLU -lGLEW
+INCLUDEPATH += "$$PWD/../freeglut-2.8.1/include"
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+# FFTW
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../fftw-2.1.5/sourceAndDoc/rfftw/release/ -lrfftw
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../fftw-2.1.5/sourceAndDoc/rfftw/debug/ -lrfftw
@@ -81,3 +74,22 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../fftw
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../fftw-2.1.5/sourceAndDoc/fftw/release/fftw.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../fftw-2.1.5/sourceAndDoc/fftw/debug/fftw.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../fftw-2.1.5/sourceAndDoc/fftw/libfftw.a
+
+# GLUT
+
+win32 {
+    CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../freeglut-2.8.1/release/ -lfreeglut-2.8.1
+    else:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../freeglut-2.8.1/debug/ -lfreeglut-2.8.1
+
+    INCLUDEPATH += $$PWD/../freeglut-2.8.1
+    DEPENDPATH += $$PWD/../freeglut-2.8.1
+
+    win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../freeglut-2.8.1/release/libfreeglut-2.8.1.a
+    else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../freeglut-2.8.1/debug/libfreeglut-2.8.1.a
+    else:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../freeglut-2.8.1/release/freeglut-2.8.1.lib
+    else:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../freeglut-2.8.1/debug/freeglut-2.8.1.lib
+
+    LIBS += -lopengl32 -lglu32 -lgdi32 -lwinmm
+
+}
+else:LIBS += -lglut -lGL -lGLU -lGLEW
