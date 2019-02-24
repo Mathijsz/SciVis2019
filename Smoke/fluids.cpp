@@ -7,6 +7,10 @@
 #include <stdio.h>              //for printing the help text
 #include <math.h>
 
+#ifdef __cplusplus
+namespace fluids {
+#endif
+
 //--- SIMULATION PARAMETERS ------------------------------------------------------------------------
 const int DIM = 50;             //size of simulation grid
 double dt = 0.4;                //simulation time step
@@ -187,7 +191,9 @@ void do_one_simulation_step(void)
 		set_forces();
 		solve(DIM, vx, vy, vx0, vy0, visc, dt);
 		diffuse_matter(DIM, vx, vy, rho, rho0, dt);
-		glutPostRedisplay();
+#ifdef USE_GLUT
+        glutPostRedisplay();
+#endif
 	}
 }
 
@@ -325,7 +331,9 @@ void display(void)
 	glLoadIdentity();
 	visualize(); 
 	glFlush(); 
-	glutSwapBuffers();
+#ifdef USE_GLUT
+    glutSwapBuffers();
+#endif
 }
 
 //reshape: Handle window resizing (reshaping) events
@@ -389,9 +397,9 @@ void drag(int mx, int my)
 	lmx = mx; lmy = my;
 }
 
-
+#ifdef USE_GLUT
 //main: The main program
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
 	printf("Fluid Flow Simulation and Visualization\n");
 	printf("=======================================\n");
@@ -405,6 +413,8 @@ int main(int argc, char **argv)
 	printf("m:     toggle thru scalar coloring\n");
 	printf("a:     toggle the animation on/off\n");
 	printf("q:     quit\n\n");
+
+    fflush(stdout);
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
@@ -420,3 +430,8 @@ int main(int argc, char **argv)
 	glutMainLoop();         //calls do_one_simulation_step, keyboard, display, drag, reshape
 	return 0;
 }
+#endif
+
+#ifdef __cplusplus
+}
+#endif
