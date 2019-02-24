@@ -3,7 +3,9 @@
 //-------------------------------------------------------------------------------------------------- 
 
 #include <rfftw.h>              //the numerical simulation FFTW library
+#ifdef USE_GLUT
 #include <GL/glut.h>            //the GLUT graphics library
+#endif
 #include <stdio.h>              //for printing the help text
 #include <math.h>
 
