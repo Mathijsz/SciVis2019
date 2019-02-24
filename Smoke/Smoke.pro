@@ -28,12 +28,15 @@ CONFIG += c++11
 DEFINES += TARGET_HOST_MS_WINDOWS X_DISPLAY_MISSING FREEGLUT_STATIC
 
 SOURCES += \
+        fluids.cpp \
         main.cpp \
         mainwindow.cpp \
-    ../fluids.c
+        smokeglwidget.cpp
 
 HEADERS += \
-        mainwindow.h
+        fluids.h \
+        mainwindow.h \
+        smokeglwidget.h
 
 FORMS += \
         mainwindow.ui
