@@ -16,4 +16,15 @@ namespace fluids {
     void keyboard(unsigned char key, int x, int y);
 }
 
+//different types of color mapping: black-and-white, rainbow, banded
+enum colormap {
+    COLOR_BLACKWHITE,
+    COLOR_RAINBOW,
+    COLOR_BANDS,
+    COLOR_RED_TO_WHITE,
+    COLOR_BLUE_TO_YELLOW,
+    COLOR_BLUE_TO_RED_VIA_WHITE,
+    NUMCOLS
+};
+
 #endif // FLUIDS_H

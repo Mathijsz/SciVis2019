@@ -22,6 +22,9 @@ public slots:
     void set_hedgehogs(int status);
     void set_smoke(int status);
 
+signals:
+    void trigger_colormap();
+
 protected:
     void initializeGL() override;
 

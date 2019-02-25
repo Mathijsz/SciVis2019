@@ -31,12 +31,14 @@ SOURCES += \
         fluids.cpp \
         main.cpp \
         mainwindow.cpp \
-        smokeglwidget.cpp
+        smokeglwidget.cpp \
+    colorlegendwidget.cpp
 
 HEADERS += \
         fluids.h \
         mainwindow.h \
-        smokeglwidget.h
+        smokeglwidget.h \
+    colorlegendwidget.h
 
 FORMS += \
         mainwindow.ui

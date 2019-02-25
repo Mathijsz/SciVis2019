@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <QRadioButton>
 #include <QString>
+#include <QRect>
+#include <QPainter>
 
 SmokeGLWidget::SmokeGLWidget(QWidget *parent)
  : QOpenGLWidget(parent), timer(new QTimer(nullptr))
@@ -67,6 +69,7 @@ void SmokeGLWidget::change_color(bool toggle)
     if (toggle) {
         QRadioButton *button = static_cast<QRadioButton *>(sender());
         fluids::scalar_col = (button->objectName().end()-1)->digitValue();
+        trigger_colormap();
     }
 }
 

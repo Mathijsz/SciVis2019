@@ -28,23 +28,37 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="SmokeGLWidget" name="smokewidget">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>500</width>
-        <height>300</height>
-       </size>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::StrongFocus</enum>
-      </property>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="SmokeGLWidget" name="smokewidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>500</width>
+          <height>300</height>
+         </size>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::StrongFocus</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="ColorLegendWidget" name="colorLegend" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>32</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
@@ -233,6 +247,12 @@
     <slot>set_smoke(int)</slot>
    </slots>
   </customwidget>
+  <customwidget>
+   <class>ColorLegendWidget</class>
+   <extends>QWidget</extends>
+   <header>colorlegendwidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -261,6 +281,22 @@
     <hint type="sourcelabel">
      <x>76</x>
      <y>384</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>318</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_3</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>change_color(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>464</y>
     </hint>
     <hint type="destinationlabel">
      <x>318</x>
@@ -301,22 +337,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>radioButton_4</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>smokewidget</receiver>
-   <slot>change_color(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>76</x>
-     <y>424</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>318</x>
-     <y>149</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>radioButton_5</sender>
    <signal>toggled(bool)</signal>
    <receiver>smokewidget</receiver>
@@ -333,14 +353,30 @@
    </hints>
   </connection>
   <connection>
-   <sender>radioButton_3</sender>
+   <sender>hedgeHogsCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_hedgehogs(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>104</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>318</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_4</sender>
    <signal>toggled(bool)</signal>
    <receiver>smokewidget</receiver>
    <slot>change_color(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>76</x>
-     <y>464</y>
+     <y>424</y>
     </hint>
     <hint type="destinationlabel">
      <x>318</x>
@@ -365,18 +401,98 @@
    </hints>
   </connection>
   <connection>
-   <sender>hedgeHogsCheckBox</sender>
-   <signal>stateChanged(int)</signal>
-   <receiver>smokewidget</receiver>
-   <slot>set_hedgehogs(int)</slot>
+   <sender>radioButton_1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>colorLegend</receiver>
+   <slot>update()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>104</x>
-     <y>317</y>
+     <x>76</x>
+     <y>388</y>
     </hint>
     <hint type="destinationlabel">
-     <x>318</x>
-     <y>149</y>
+     <x>620</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_0</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>colorLegend</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>368</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>620</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>colorLegend</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>408</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>620</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_3</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>colorLegend</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>468</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>620</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_4</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>colorLegend</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>428</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>620</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_5</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>colorLegend</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>448</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>620</x>
+     <y>150</y>
     </hint>
    </hints>
   </connection>
