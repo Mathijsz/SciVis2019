@@ -4,6 +4,9 @@
 namespace fluids {
 
     extern int color_dir;
+    extern int scalar_col;
+    extern int draw_vecs;
+    extern int draw_smoke;
 
     void init_simulation(int n);
     void display(void);

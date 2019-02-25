@@ -38,7 +38,7 @@ enum {
     COLOR_RED_TO_WHITE,
     COLOR_BLUE_TO_YELLOW,
     COLOR_BLUE_TO_RED_VIA_WHITE,
-    NUMCOLORS
+    NUMCOLS
 };
 
 int   scalar_col = 0;           //method for scalar coloring
@@ -419,10 +419,10 @@ void keyboard(unsigned char key, int x, int y)
 		case 'V': visc *= 5; break;
 		case 'v': visc *= 0.2; break;
 		case 'x': draw_smoke = 1 - draw_smoke; 
-			if (draw_smoke==0) draw_vecs = 1; break;
+//			if (draw_smoke==0) draw_vecs = 1; break;
 		case 'y': draw_vecs = 1 - draw_vecs; 
-			if (draw_vecs==0) draw_smoke = 1; break;
-        case 'm': scalar_col++; if (scalar_col>=NUMCOLORS) scalar_col=COLOR_BLACKWHITE; break;
+//			if (draw_vecs==0) draw_smoke = 1; break;
+        case 'm': scalar_col++; if (scalar_col>=NUMCOLS) scalar_col=COLOR_BLACKWHITE; break;
 		case 'a': frozen = 1-frozen; break;
 		case 'q': exit(0);
 	}

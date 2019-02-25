@@ -18,6 +18,9 @@ public slots:
     void step();
 
     void set_color(int status);
+    void change_color(bool toggle);
+    void set_hedgehogs(int status);
+    void set_smoke(int status);
 
 protected:
     void initializeGL() override;

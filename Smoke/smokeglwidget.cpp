@@ -4,6 +4,8 @@
 #include <QTimer>
 #include <QMouseEvent>
 #include <QDebug>
+#include <QRadioButton>
+#include <QString>
 
 SmokeGLWidget::SmokeGLWidget(QWidget *parent)
  : QOpenGLWidget(parent), timer(new QTimer(nullptr))
@@ -50,7 +52,6 @@ void SmokeGLWidget::keyPressEvent(QKeyEvent *e)
     if (e->text().length() <= 0)
         return;
     // keyboard function in the original code only deals with ascii
-    qDebug() << e->text();
     QString t = e->text();
     char c = t.at(0).toLatin1();
     fluids::keyboard(static_cast<unsigned char>(c), 0, 0);
@@ -59,4 +60,22 @@ void SmokeGLWidget::keyPressEvent(QKeyEvent *e)
 void SmokeGLWidget::set_color(int status)
 {
     fluids::color_dir = status;
+}
+
+void SmokeGLWidget::change_color(bool toggle)
+{
+    if (toggle) {
+        QRadioButton *button = static_cast<QRadioButton *>(sender());
+        fluids::scalar_col = (button->objectName().end()-1)->digitValue();
+    }
+}
+
+void SmokeGLWidget::set_hedgehogs(int status)
+{
+    fluids::draw_vecs = status;
+}
+
+void SmokeGLWidget::set_smoke(int status)
+{
+    fluids::draw_smoke = status;
 }
