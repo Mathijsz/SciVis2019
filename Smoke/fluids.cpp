@@ -8,6 +8,7 @@
 #include <math.h>
 
 #ifdef __cplusplus
+#include <QDebug>
 namespace fluids {
 #endif
 
@@ -28,9 +29,17 @@ int   color_dir = 0;            //use direction color-coding or not
 float vec_scale = 1000;         //scaling of hedgehogs
 int   draw_smoke = 0;           //draw the smoke or not
 int   draw_vecs = 1;            //draw the vector field or not
-const int COLOR_BLACKWHITE=0;   //different types of color mapping: black-and-white, rainbow, banded
-const int COLOR_RAINBOW=1;
-const int COLOR_BANDS=2;
+
+//different types of color mapping: black-and-white, rainbow, banded
+enum {
+    COLOR_BLACKWHITE=0,
+    COLOR_RAINBOW=1,
+    COLOR_BANDS=2,
+    COLOR_RED_TO_WHITE=3,
+    COLOR_BLUE_TO_YELLOW=4
+};
+const int NUMCOLS=5;
+
 int   scalar_col = 0;           //method for scalar coloring
 int   frozen = 0;               //toggles on/off the animation
 
@@ -76,7 +85,10 @@ int clamp(float x)
 
 #ifndef _MSC_VER
 float max(float x, float y)
-{ return x < y ? x : y; }
+{ return x > y ? x : y; }
+
+float min(float x, float y)
+{ return x <= y ? x : y; }
 #endif
 
 //solve: Solve (compute) one step of the fluid flow simulation
@@ -212,21 +224,57 @@ void rainbow(float value,float* R,float* G,float* B)
  	*B = max(0.0,(3-fabs(value-1)-fabs(value-2))/2);
 }
 
+void red_to_white(float value, float *R, float *G, float *B)
+{
+    if (value < 0)
+        value=0;
+    if (value > 1)
+        value=1;
+    *R = 1;
+    *B = value;
+    *G = value;
+}
+
+void blue_to_yellow(float value, float *R, float *G, float *B)
+{
+    // 0 0 1 -> 0 1 1 -> 0 1 0 -> 1 1 0
+    if (value < 0)
+        value=0;
+    if (value > 1)
+        value=1;
+    *R = max(value-(2/3), 0.0)*3;
+    *G = min(value*3, 1.0);
+    *B = min(1.0, max(0.0, 2-value*3));
+}
+
 //set_colormap: Sets three different types of colormaps
 void set_colormap(float vy)
 {
    float R,G,B; 
 
-   if (scalar_col==COLOR_BLACKWHITE)
-	   R = G = B = vy;
-   else if (scalar_col==COLOR_RAINBOW)
-	   rainbow(vy,&R,&G,&B); 
-   else if (scalar_col==COLOR_BANDS)
-	   {  
-		  const int NLEVELS = 7;
-		  vy *= NLEVELS; vy = (int)(vy); vy/= NLEVELS; 
-		  rainbow(vy,&R,&G,&B);   
-	   }
+//   qDebug() << "scalcol:"<< scalar_col <<", bool %d" << (scalar_col == COLOR_RAINBOW);
+   fflush(stdout);
+   switch (scalar_col) {
+       case COLOR_RAINBOW:
+            rainbow(vy,&R,&G,&B);
+            break;
+       case COLOR_BLUE_TO_YELLOW:
+            blue_to_yellow(vy, &R, &G, &B);
+            break;
+       case COLOR_RED_TO_WHITE:
+            red_to_white(vy, &R, &G, &B);
+            break;
+       case COLOR_BANDS:
+            {
+            const int NLEVELS = 7;
+            vy *= NLEVELS; vy = (int)(vy); vy/= NLEVELS;
+            rainbow(vy,&R,&G,&B);
+            break;
+            }
+       default:
+            R = G = B = vy;
+            break;
+   }
    
    glColor3f(R,G,B);
 }
@@ -291,8 +339,7 @@ void visualize(void)
 				py3 = hn + (fftw_real)j * hn;
 				idx3 = (j * DIM) + (i + 1);
 
-
-				set_colormap(rho[idx0]);    glVertex2f(px0, py0);
+                set_colormap(rho[idx0]);    glVertex2f(px0, py0);
 				set_colormap(rho[idx1]);    glVertex2f(px1, py1);
 				set_colormap(rho[idx2]);    glVertex2f(px2, py2);
 
@@ -362,7 +409,7 @@ void keyboard(unsigned char key, int x, int y)
 			if (draw_smoke==0) draw_vecs = 1; break;
 		case 'y': draw_vecs = 1 - draw_vecs; 
 			if (draw_vecs==0) draw_smoke = 1; break;
-		case 'm': scalar_col++; if (scalar_col>COLOR_BANDS) scalar_col=COLOR_BLACKWHITE; break;
+        case 'm': scalar_col++; if (scalar_col>=NUMCOLS) scalar_col=COLOR_BLACKWHITE; break;
 		case 'a': frozen = 1-frozen; break;
 		case 'q': exit(0);
 	}
