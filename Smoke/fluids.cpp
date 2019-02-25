@@ -32,13 +32,14 @@ int   draw_vecs = 1;            //draw the vector field or not
 
 //different types of color mapping: black-and-white, rainbow, banded
 enum {
-    COLOR_BLACKWHITE=0,
-    COLOR_RAINBOW=1,
-    COLOR_BANDS=2,
-    COLOR_RED_TO_WHITE=3,
-    COLOR_BLUE_TO_YELLOW=4
+    COLOR_BLACKWHITE,
+    COLOR_RAINBOW,
+    COLOR_BANDS,
+    COLOR_RED_TO_WHITE,
+    COLOR_BLUE_TO_YELLOW,
+    COLOR_BLUE_TO_RED_VIA_WHITE,
+    NUMCOLORS
 };
-const int NUMCOLS=5;
 
 int   scalar_col = 0;           //method for scalar coloring
 int   frozen = 0;               //toggles on/off the animation
@@ -231,13 +232,24 @@ void red_to_white(float value, float *R, float *G, float *B)
     if (value > 1)
         value=1;
     *R = 1;
-    *B = value;
     *G = value;
+    *B = value;
 }
+
+void blue_to_red_via_white(float value, float *R, float *G, float *B)
+{
+    if (value < 0)
+        value=0;
+    if (value > 1)
+        value=1;
+    *R = min(1.0, 2*value);
+    *G = 1-fabs(value*2-1);
+    *B = min(1.0, 2 - 2*value);
+}
+
 
 void blue_to_yellow(float value, float *R, float *G, float *B)
 {
-    // 0 0 1 -> 0 1 1 -> 0 1 0 -> 1 1 0
     if (value < 0)
         value=0;
     if (value > 1)
@@ -252,8 +264,6 @@ void set_colormap(float vy)
 {
    float R,G,B; 
 
-//   qDebug() << "scalcol:"<< scalar_col <<", bool %d" << (scalar_col == COLOR_RAINBOW);
-   fflush(stdout);
    switch (scalar_col) {
        case COLOR_RAINBOW:
             rainbow(vy,&R,&G,&B);
@@ -263,6 +273,9 @@ void set_colormap(float vy)
             break;
        case COLOR_RED_TO_WHITE:
             red_to_white(vy, &R, &G, &B);
+            break;
+       case COLOR_BLUE_TO_RED_VIA_WHITE:
+            blue_to_red_via_white(vy, &R, &G, &B);
             break;
        case COLOR_BANDS:
             {
@@ -316,9 +329,9 @@ void visualize(void)
 		double px0, py0, px1, py1, px2, py2, px3, py3;
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glBegin(GL_TRIANGLES);
-		for (j = 0; j < DIM - 1; j++)            //draw smoke
+        for (j = 0; j < DIM - 1; j++)            //draw smoke
 		{
-			for (i = 0; i < DIM - 1; i++)
+            for (i = 0; i < DIM - 1; i++)
 			{
 				px0 = wn + (fftw_real)i * wn;
 				py0 = hn + (fftw_real)j * hn;
@@ -409,7 +422,7 @@ void keyboard(unsigned char key, int x, int y)
 			if (draw_smoke==0) draw_vecs = 1; break;
 		case 'y': draw_vecs = 1 - draw_vecs; 
 			if (draw_vecs==0) draw_smoke = 1; break;
-        case 'm': scalar_col++; if (scalar_col>=NUMCOLS) scalar_col=COLOR_BLACKWHITE; break;
+        case 'm': scalar_col++; if (scalar_col>=NUMCOLORS) scalar_col=COLOR_BLACKWHITE; break;
 		case 'a': frozen = 1-frozen; break;
 		case 'q': exit(0);
 	}
