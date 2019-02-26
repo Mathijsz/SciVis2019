@@ -19,8 +19,11 @@ QMAKE_CXXFLAGS_WARN_ON  += -Wall -Wno-unused-parameter
 
 HEADERS += \
     fftw-int.h \
-    fftw.h \
-    config.h
+    fftw.h
+
+win32:!win32-g++:   HEADERS += config-win.h
+else:               HEADERS += config.h
+
 unix {
     target.path = /usr/lib
     INSTALLS += target
