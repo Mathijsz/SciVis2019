@@ -3,15 +3,14 @@
 //-------------------------------------------------------------------------------------------------- 
 
 #include <rfftw.h>              //the numerical simulation FFTW library
-#include <GL/glut.h>            //the GLUT graphics library
 #include <stdio.h>              //for printing the help text
 #include <math.h>
 
-#ifdef __cplusplus
+#include <QOpenGLFunctions>
 #include <QDebug>
 #include "fluids.h"
+
 namespace fluids {
-#endif
 
 //--- SIMULATION PARAMETERS ------------------------------------------------------------------------
 const int DIM = 50;             //size of simulation grid
@@ -74,13 +73,11 @@ void FFT(int direction,void* vx)
 int clamp(float x) 
 { return ((x)>=0.0?((int)(x)):(-((int)(1-(x))))); }
 
-#ifndef _MSC_VER
 float max(float x, float y)
 { return x > y ? x : y; }
 
 float min(float x, float y)
 { return x <= y ? x : y; }
-#endif
 
 //solve: Solve (compute) one step of the fluid flow simulation
 void solve(int n, fftw_real* vx, fftw_real* vy, fftw_real* vx0, fftw_real* vy0, fftw_real visc, fftw_real dt) 
@@ -382,7 +379,7 @@ void display(void)
 	visualize(); 
 	glFlush(); 
 #ifdef USE_GLUT
-    glutSwapBuffers();
+    glutSwapBuffers(); // This step is done automatically by Qt
 #endif
 }
 
@@ -392,7 +389,8 @@ void reshape(int w, int h)
 	glViewport(0.0f, 0.0f, (GLfloat)w, (GLfloat)h);
 	glMatrixMode(GL_PROJECTION);  
 	glLoadIdentity();
-	gluOrtho2D(0.0, (GLdouble)w, 0.0, (GLdouble)h);
+//	gluOrtho2D(0.0, (GLdouble)w, 0.0, (GLdouble)h);
+	glOrtho(0.0, (GLdouble)w, 0.0, (GLdouble)h, -1, 1);
 	winWidth = w; winHeight = h;
 }
 
@@ -482,6 +480,5 @@ int main(int argc, char **argv)
 }
 #endif
 
-#ifdef __cplusplus
+// End of namespace 'fluids'
 }
-#endif

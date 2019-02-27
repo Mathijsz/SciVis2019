@@ -25,6 +25,10 @@ SmokeGLWidget::~SmokeGLWidget()
 void SmokeGLWidget::initializeGL()
 {
     initializeOpenGLFunctions();
+    qDebug() << "Using OpenGL"
+             << reinterpret_cast<const char *>(glGetString(GL_VERSION))
+             << "on"
+             << reinterpret_cast<const char *>(glGetString(GL_RENDERER));
 }
 
 void SmokeGLWidget::resizeGL(int w, int h)

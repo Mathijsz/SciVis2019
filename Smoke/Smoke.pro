@@ -24,28 +24,23 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
-# Needed for freeglut
-DEFINES += TARGET_HOST_MS_WINDOWS X_DISPLAY_MISSING FREEGLUT_STATIC
-
 SOURCES += \
         fluids.cpp \
         main.cpp \
         mainwindow.cpp \
         smokeglwidget.cpp \
-    colorlegendwidget.cpp
+        colorlegendwidget.cpp
 
 HEADERS += \
         fluids.h \
         mainwindow.h \
         smokeglwidget.h \
-    colorlegendwidget.h
+        colorlegendwidget.h
 
 FORMS += \
         mainwindow.ui
 
-LIBS += -lm
-
-INCLUDEPATH += "$$PWD/../freeglut-2.8.1/include"
+win32-g++|unix: LIBS += -lm
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -80,21 +75,7 @@ else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PW
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../fftw-2.1.5/sourceAndDoc/fftw/debug/fftw.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../fftw-2.1.5/sourceAndDoc/fftw/libfftw.a
 
-# GLUT
-
-win32 {
-    CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../freeglut-2.8.1/release/ -lfreeglut-2.8.1
-    else:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../freeglut-2.8.1/debug/ -lfreeglut-2.8.1
-
-    INCLUDEPATH += $$PWD/../freeglut-2.8.1
-    DEPENDPATH += $$PWD/../freeglut-2.8.1
-
-    win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../freeglut-2.8.1/release/libfreeglut-2.8.1.a
-    else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../freeglut-2.8.1/debug/libfreeglut-2.8.1.a
-    else:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../freeglut-2.8.1/release/freeglut-2.8.1.lib
-    else:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../freeglut-2.8.1/debug/freeglut-2.8.1.lib
-
-    LIBS += -lopengl32 -lglu32 -lgdi32 -lwinmm
-
-}
-else:LIBS += -lglut -lGL -lGLU -lGLEW
+# OpenGL link flags
+# Adding 'opengl' to the QT flags above does not actually link platform-dependent libraries..
+win32: LIBS += -lopengl32 -lgdi32 -lwinmm
+else: LIBS += -lGL
