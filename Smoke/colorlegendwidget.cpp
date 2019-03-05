@@ -1,6 +1,8 @@
 #include "colorlegendwidget.h"
 
 #include <QPainter>
+#include <QImage>
+#include <QDebug>
 #include "fluids.h"
 
 ColorLegendWidget::ColorLegendWidget(QWidget *parent) : QWidget(parent)
@@ -11,35 +13,42 @@ ColorLegendWidget::ColorLegendWidget(QWidget *parent) : QWidget(parent)
 void ColorLegendWidget::paintEvent(QPaintEvent *event)
 {
     QRect bar(0, 0, width(), height());
-    QLinearGradient gradient(bar.topLeft(), bar.bottomLeft());
+    QImage image;
 
     switch (fluids::scalar_col) {
         case COLOR_RAINBOW:
-            gradient.setColorAt(0, Qt::blue);
-            gradient.setColorAt(0.5, Qt::green);
-            gradient.setColorAt(1, Qt::red);
+            image = constructLegend(&fluids::rainbow);
             break;
         case COLOR_BLUE_TO_YELLOW:
-            gradient.setColorAt(0, Qt::blue);
-            gradient.setColorAt(1, Qt::yellow);
+            image = constructLegend(&fluids::blue_to_yellow);
             break;
         case COLOR_RED_TO_WHITE:
-            gradient.setColorAt(0, Qt::red);
-            gradient.setColorAt(1, Qt::white);
+            image = constructLegend(&fluids::red_to_white);
             break;
         case COLOR_BLUE_TO_RED_VIA_WHITE:
-            gradient.setColorAt(0, Qt::blue);
-            gradient.setColorAt(0.5, Qt::white);
-            gradient.setColorAt(1, Qt::red);
+            image = constructLegend(&fluids::blue_to_red_via_white);
             break;
         case COLOR_BANDS:
-
+            image = constructLegend(&fluids::rainbow, 10);
             break;
         default:
-
+            image = constructLegend(&fluids::white_to_black);
             break;
     }
-
+    image = image.scaled(bar.width(), bar.height(), Qt::IgnoreAspectRatio);
     QPainter painter(this);
-    painter.fillRect(bar, gradient);
+    painter.fillRect(bar, image);
+}
+
+
+QImage ColorLegendWidget::constructLegend(void (*f)(float, float*, float*, float*), int banding_levels)
+{
+    float r, g, b;
+    QImage image(1, 256, QImage::Format_RGB32);
+    for (int i = 0; i < 256; i++) {
+        fluids::with_banding(f, (float)i /256, &r, &g, &b, banding_levels);
+        image.setPixel(0, i, qRgba(256, 256*r, 256*g, 256*b) );
+        qDebug() << i << ":" << r << g << b << hex << qRgb(256*r, 256*g, 256*b);
+    }
+    return image;
 }

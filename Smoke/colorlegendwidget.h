@@ -14,6 +14,9 @@ protected:
 
 signals:
 
+private:
+    QImage constructLegend(void (*f)(float, float*, float*, float*), int banding_levels = 0);
+
 };
 
 #endif // COLORLEGENDWIDGET_H

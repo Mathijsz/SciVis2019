@@ -212,6 +212,16 @@ void rainbow(float value,float* R,float* G,float* B)
  	*B = max(0.0,(3-fabs(value-1)-fabs(value-2))/2);
 }
 
+void with_banding(void (*f)(float, float*, float*, float*), float value, float* R,float* G,float* B, int levels)
+{
+    if (levels > 0) {
+        value *= levels;
+        value = (int)(value);
+        value/= levels;
+    }
+    (*f)(value, R, G, B);
+}
+
 void red_to_white(float value, float *R, float *G, float *B)
 {
     if (value < 0)
@@ -246,6 +256,11 @@ void blue_to_yellow(float value, float *R, float *G, float *B)
     *B = min(1.0, max(0.0, 2-value*3));
 }
 
+void white_to_black(float value, float *R, float *G, float *B)
+{
+    *R = *G = *B = value;
+}
+
 //set_colormap: Sets three different types of colormaps
 void set_colormap(float vy)
 {
@@ -265,14 +280,10 @@ void set_colormap(float vy)
             blue_to_red_via_white(vy, &R, &G, &B);
             break;
        case COLOR_BANDS:
-            {
-            const int NLEVELS = 7;
-            vy *= NLEVELS; vy = (int)(vy); vy/= NLEVELS;
-            rainbow(vy,&R,&G,&B);
+            with_banding(rainbow, vy, &R, &G, &B, 7);
             break;
-            }
        default:
-            R = G = B = vy;
+            white_to_black(vy, &R, &G, &B);
             break;
    }
    
@@ -340,13 +351,13 @@ void visualize(void)
 				idx3 = (j * DIM) + (i + 1);
 
                 set_colormap(rho[idx0]);    glVertex2f(px0, py0);
-				set_colormap(rho[idx1]);    glVertex2f(px1, py1);
-				set_colormap(rho[idx2]);    glVertex2f(px2, py2);
+                set_colormap(rho[idx1]);    glVertex2f(px1, py1);
+                set_colormap(rho[idx2]);    glVertex2f(px2, py2);
 
 
-				set_colormap(rho[idx0]);    glVertex2f(px0, py0);
-				set_colormap(rho[idx2]);    glVertex2f(px2, py2);
-				set_colormap(rho[idx3]);    glVertex2f(px3, py3);
+                set_colormap(rho[idx0]);    glVertex2f(px0, py0);
+                set_colormap(rho[idx2]);    glVertex2f(px2, py2);
+                set_colormap(rho[idx3]);    glVertex2f(px3, py3);
 			}
 		}
 		glEnd();
