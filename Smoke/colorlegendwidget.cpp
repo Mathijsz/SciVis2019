@@ -46,9 +46,8 @@ QImage ColorLegendWidget::constructLegend(void (*f)(float, float*, float*, float
     float r, g, b;
     QImage image(1, 256, QImage::Format_RGB32);
     for (int i = 0; i < 256; i++) {
-        fluids::with_banding(f, (float)i /256, &r, &g, &b, banding_levels);
-        image.setPixel(0, i, qRgba(256, 256*r, 256*g, 256*b) );
-        qDebug() << i << ":" << r << g << b << hex << qRgb(256*r, 256*g, 256*b);
+        fluids::with_banding(f, (float)i / 255, &r, &g, &b, banding_levels);
+        image.setPixel(0, i, qRgb(255*r, 255*g, 255*b));
     }
     return image;
 }

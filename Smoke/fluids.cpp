@@ -244,14 +244,13 @@ void blue_to_red_via_white(float value, float *R, float *G, float *B)
     *B = min(1.0, 2 - 2*value);
 }
 
-
 void blue_to_yellow(float value, float *R, float *G, float *B)
 {
     if (value < 0)
         value=0;
     if (value > 1)
         value=1;
-    *R = max(value-(2/3), 0.0)*3;
+    *R = max(value-(2/3), 0.0);
     *G = min(value*3, 1.0);
     *B = min(1.0, max(0.0, 2-value*3));
 }
