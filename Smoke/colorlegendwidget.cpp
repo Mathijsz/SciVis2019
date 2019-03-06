@@ -15,26 +15,9 @@ void ColorLegendWidget::paintEvent(QPaintEvent *event)
     QRect bar(0, 0, width(), height());
     QImage image;
 
-    switch (fluids::scalar_col) {
-        case COLOR_RAINBOW:
-            image = constructLegend(&fluids::rainbow);
-            break;
-        case COLOR_BLUE_TO_YELLOW:
-            image = constructLegend(&fluids::blue_to_yellow);
-            break;
-        case COLOR_RED_TO_WHITE:
-            image = constructLegend(&fluids::red_to_white);
-            break;
-        case COLOR_BLUE_TO_RED_VIA_WHITE:
-            image = constructLegend(&fluids::blue_to_red_via_white);
-            break;
-        case COLOR_BANDS:
-            image = constructLegend(&fluids::rainbow, 10);
-            break;
-        default:
-            image = constructLegend(&fluids::white_to_black);
-            break;
-    }
+    using namespace fluids;
+    image = constructLegend(get_color_func((colormap)scalar_col), bands);
+
     image = image.scaled(bar.width(), bar.height(), Qt::IgnoreAspectRatio);
     QPainter painter(this);
     painter.fillRect(bar, image);
@@ -46,7 +29,11 @@ QImage ColorLegendWidget::constructLegend(void (*f)(float, float*, float*, float
     float r, g, b;
     QImage image(1, 256, QImage::Format_RGB32);
     for (int i = 0; i < 256; i++) {
-        fluids::with_banding(f, (float)i / 255, &r, &g, &b, banding_levels);
+        // Also display max value in the color legend
+        int div = 256;
+        if (banding_levels > 1)
+            div -= 255 / banding_levels;
+        fluids::with_banding(f, (float)i / div, &r, &g, &b, banding_levels);
         image.setPixel(0, i, qRgb(255*r, 255*g, 255*b));
     }
     return image;

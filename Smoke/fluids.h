@@ -1,12 +1,25 @@
 #ifndef FLUIDS_H
 #define FLUIDS_H
 
+typedef void (*color_func)(float, float*, float*, float*);
+
+//different types of color mapping: black-and-white, rainbow, banded
+typedef enum colormap {
+    COLOR_BLACKWHITE,
+    COLOR_RAINBOW,
+    COLOR_RED_TO_WHITE,
+    COLOR_BLUE_TO_YELLOW,
+    COLOR_BLUE_TO_RED_VIA_WHITE,
+    NUMCOLS
+} colormap;
+
 namespace fluids {
 
     extern int color_dir;
     extern int scalar_col;
     extern int draw_vecs;
     extern int draw_smoke;
+    extern int bands;
 
     void init_simulation(int n);
     void display(void);
@@ -15,23 +28,8 @@ namespace fluids {
     void drag(int mx, int my);
     void keyboard(unsigned char key, int x, int y);
 
-    void rainbow(float value,float* R,float* G,float* B);
-    void red_to_white(float value, float *R, float *G, float *B);
-    void blue_to_red_via_white(float value, float *R, float *G, float *B);
-    void blue_to_yellow(float value, float *R, float *G, float *B);
-    void white_to_black(float value, float *R, float *G, float *B);
-    void with_banding(void (*f)(float, float*, float*, float*), float value, float* R,float* G,float* B, int levels);
+    void with_banding(color_func f, float value, float* R,float* G,float* B, int levels);
+    color_func get_color_func(colormap col);
 }
-
-//different types of color mapping: black-and-white, rainbow, banded
-enum colormap {
-    COLOR_BLACKWHITE,
-    COLOR_RAINBOW,
-    COLOR_BANDS,
-    COLOR_RED_TO_WHITE,
-    COLOR_BLUE_TO_YELLOW,
-    COLOR_BLUE_TO_RED_VIA_WHITE,
-    NUMCOLS
-};
 
 #endif // FLUIDS_H

@@ -72,7 +72,9 @@ void SmokeGLWidget::change_color(bool toggle)
 {
     if (toggle) {
         QRadioButton *button = static_cast<QRadioButton *>(sender());
-        fluids::scalar_col = (button->objectName().end()-1)->digitValue();
+        int digit = (button->objectName().end()-1)->digitValue();
+        if (digit >= 0)
+            fluids::scalar_col = digit;
         trigger_colormap();
     }
 }
@@ -85,4 +87,9 @@ void SmokeGLWidget::set_hedgehogs(int status)
 void SmokeGLWidget::set_smoke(int status)
 {
     fluids::draw_smoke = status;
+}
+
+void SmokeGLWidget::set_bands(int bands)
+{
+    fluids::bands = bands;
 }

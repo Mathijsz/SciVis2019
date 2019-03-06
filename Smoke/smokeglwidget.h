@@ -21,6 +21,7 @@ public slots:
     void change_color(bool toggle);
     void set_hedgehogs(int status);
     void set_smoke(int status);
+    void set_bands(int bands);
 
 signals:
     void trigger_colormap();

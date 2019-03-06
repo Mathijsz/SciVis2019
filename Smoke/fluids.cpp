@@ -33,7 +33,7 @@ int   draw_vecs = 1;            //draw the vector field or not
 int   scalar_col = 0;           //method for scalar coloring
 int   frozen = 0;               //toggles on/off the animation
 
-
+int bands = 0;
 
 //------ SIMULATION CODE STARTS HERE -----------------------------------------------------------------
 
@@ -212,12 +212,13 @@ void rainbow(float value,float* R,float* G,float* B)
  	*B = max(0.0,(3-fabs(value-1)-fabs(value-2))/2);
 }
 
-void with_banding(void (*f)(float, float*, float*, float*), float value, float* R,float* G,float* B, int levels)
+void with_banding(color_func f, float value, float *R, float *G, float *B, int levels)
 {
     if (levels > 0) {
+        levels--;
         value *= levels;
-        value = (int)(value);
-        value/= levels;
+        value = (int)value;
+        value /= levels;
     }
     (*f)(value, R, G, B);
 }
@@ -260,32 +261,29 @@ void white_to_black(float value, float *R, float *G, float *B)
     *R = *G = *B = value;
 }
 
+color_func get_color_func(colormap col)
+{
+    switch (col) {
+        case COLOR_RAINBOW:
+             return &rainbow;
+        case COLOR_BLUE_TO_YELLOW:
+             return &blue_to_yellow;
+        case COLOR_RED_TO_WHITE:
+             return &red_to_white;
+        case COLOR_BLUE_TO_RED_VIA_WHITE:
+             return &blue_to_red_via_white;
+        case COLOR_BLACKWHITE:
+        default:
+             return &white_to_black;
+    }
+}
+
 //set_colormap: Sets three different types of colormaps
 void set_colormap(float vy)
 {
-   float R,G,B; 
-
-   switch (scalar_col) {
-       case COLOR_RAINBOW:
-            rainbow(vy,&R,&G,&B);
-            break;
-       case COLOR_BLUE_TO_YELLOW:
-            blue_to_yellow(vy, &R, &G, &B);
-            break;
-       case COLOR_RED_TO_WHITE:
-            red_to_white(vy, &R, &G, &B);
-            break;
-       case COLOR_BLUE_TO_RED_VIA_WHITE:
-            blue_to_red_via_white(vy, &R, &G, &B);
-            break;
-       case COLOR_BANDS:
-            with_banding(rainbow, vy, &R, &G, &B, 7);
-            break;
-       default:
-            white_to_black(vy, &R, &G, &B);
-            break;
-   }
-   
+   float R,G,B;
+   color_func f = get_color_func((colormap)scalar_col);
+   with_banding(f, vy, &R, &G, &B, bands);
    glColor3f(R,G,B);
 }
 
