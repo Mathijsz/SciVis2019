@@ -13,6 +13,13 @@ typedef enum colormap {
     NUMCOLS
 } colormap;
 
+typedef enum vis_data_type {
+    DENSITY_RHO,
+    VELOCITY_V,
+    FORCE_FIELD_F,
+    NUMDATATYPES
+} vis_data_type;
+
 namespace fluids {
 
     extern int color_dir;
@@ -20,6 +27,12 @@ namespace fluids {
     extern int draw_vecs;
     extern int draw_smoke;
     extern int bands;
+    extern bool enable_bands;
+    extern float min_col;
+    extern float max_col;
+    extern vis_data_type color_data_type;
+    extern vis_data_type vector_data_type;
+
 
     void init_simulation(int n);
     void display(void);

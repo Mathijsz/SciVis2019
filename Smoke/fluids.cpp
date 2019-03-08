@@ -5,6 +5,7 @@
 #include <rfftw.h>              //the numerical simulation FFTW library
 #include <stdio.h>              //for printing the help text
 #include <math.h>
+#include <tuple>
 
 #include <QOpenGLFunctions>
 #include <QDebug>
@@ -33,7 +34,14 @@ int   draw_vecs = 1;            //draw the vector field or not
 int   scalar_col = 0;           //method for scalar coloring
 int   frozen = 0;               //toggles on/off the animation
 
-int bands = 0;
+
+bool enable_bands = false;
+int bands = 2;
+float min_col = 0.0;
+float max_col = 1.0;
+vis_data_type color_data_type = DENSITY_RHO;
+vis_data_type vector_data_type = VELOCITY_V;
+
 
 //------ SIMULATION CODE STARTS HERE -----------------------------------------------------------------
 
@@ -200,12 +208,23 @@ void do_one_simulation_step(void)
 
 //------ VISUALIZATION CODE STARTS HERE -----------------------------------------------------------------
 
+float rescale(float value)
+{
+    if (min_col >= max_col) {
+        min_col = max_col - 0.0001;
+    }
+    if (value < min_col)
+        value=min_col;
+    if (value > max_col)
+        value=max_col;
+    return (value - min_col) / (max_col-min_col);
+}
 
 //rainbow: Implements a color palette, mapping the scalar 'value' to a rainbow color RGB
 void rainbow(float value,float* R,float* G,float* B)
 {
 	const float dx=0.8; 
-	if (value<0) value=0; if (value>1) value=1;
+    value = rescale(value);
 	value = (6-2*dx)*value+dx;
 	*R = max(0.0,(3-fabs(value-4)-fabs(value-5))/2);
  	*G = max(0.0,(4-fabs(value-2)-fabs(value-4))/2);
@@ -225,10 +244,7 @@ void with_banding(color_func f, float value, float *R, float *G, float *B, int l
 
 void red_to_white(float value, float *R, float *G, float *B)
 {
-    if (value < 0)
-        value=0;
-    if (value > 1)
-        value=1;
+    value = rescale(value);
     *R = 1;
     *G = value;
     *B = value;
@@ -236,10 +252,7 @@ void red_to_white(float value, float *R, float *G, float *B)
 
 void blue_to_red_via_white(float value, float *R, float *G, float *B)
 {
-    if (value < 0)
-        value=0;
-    if (value > 1)
-        value=1;
+    value = rescale(value);
     *R = min(1.0, 2*value);
     *G = 1-fabs(value*2-1);
     *B = min(1.0, 2 - 2*value);
@@ -247,10 +260,7 @@ void blue_to_red_via_white(float value, float *R, float *G, float *B)
 
 void blue_to_yellow(float value, float *R, float *G, float *B)
 {
-    if (value < 0)
-        value=0;
-    if (value > 1)
-        value=1;
+    value = rescale(value);
     *R = max(value-(2/3), 0.0);
     *G = min(value*3, 1.0);
     *B = min(1.0, max(0.0, 2-value*3));
@@ -258,6 +268,7 @@ void blue_to_yellow(float value, float *R, float *G, float *B)
 
 void white_to_black(float value, float *R, float *G, float *B)
 {
+    value = rescale(value);
     *R = *G = *B = value;
 }
 
@@ -281,34 +292,68 @@ color_func get_color_func(colormap col)
 //set_colormap: Sets three different types of colormaps
 void set_colormap(float vy)
 {
-   float R,G,B;
-   color_func f = get_color_func((colormap)scalar_col);
-   with_banding(f, vy, &R, &G, &B, bands);
-   glColor3f(R,G,B);
+    float R,G,B;
+    color_func f = get_color_func((colormap)scalar_col);
+    if (enable_bands)
+        with_banding(f, vy, &R, &G, &B, bands);
+    else
+        f(vy, &R, &G, &B);
+    glColor3f(R,G,B);
 }
 
+fftw_real get_vis_data(int idx)
+{
+    switch (color_data_type) {
+        case DENSITY_RHO:
+            return rho[idx];
+        case VELOCITY_V:
+            return sqrt(vx[idx]*vx[idx] + vy[idx]*vy[idx]);
+        case FORCE_FIELD_F:
+            return sqrt(fx[idx]*fx[idx] + fy[idx]*fy[idx]);
+    }
+}
 
 //direction_to_color: Set the current color by mapping a direction vector (x,y), using
 //                    the color mapping method 'method'. If method==1, map the vector direction
 //                    using a rainbow colormap. If method==0, simply use the white color
-void direction_to_color(float x, float y, int method)
+void direction_to_color(int idx, int method)
 {
 	float r,g,b,f;
-	if (method)
-	{
-		f = atan2(y,x) / 3.1415927 + 1;
-		r = f;
-		if(r > 1) r = 2 - r;
-		g = f + .66667;
-		if(g > 2) g -= 2;
-		if(g > 1) g = 2 - g;
-		b = f + 2 * .66667;
-		if(b > 2) b -= 2;
-		if(b > 1) b = 2 - b;
-	} 
-	else
-	{ r = g = b = 1; }
+    if (method)
+    {
+        float x = vx[idx];
+        float y = vy[idx];
+
+        f = atan2(y,x) / 3.1415927 + 1;
+        r = f;
+        if(r > 1) r = 2 - r;
+        g = f + .66667;
+        if(g > 2) g -= 2;
+        if(g > 1) g = 2 - g;
+        b = f + 2 * .66667;
+        if(b > 2) b -= 2;
+        if(b > 1) b = 2 - b;
+    }
+    else
+    {
+        color_func func = get_color_func((colormap)scalar_col);
+        if (enable_bands) {
+            with_banding(func, get_vis_data(idx), &r, &g, &b, bands);
+        } else {
+            (*func)(get_vis_data(idx), &r, &g, &b);
+        }
+    }
 	glColor3f(r,g,b);
+}
+
+std::tuple<fftw_real*,fftw_real*> get_vec_data()
+{
+    switch (vector_data_type) {
+        case VELOCITY_V:
+            return std::make_tuple(vx, vy);
+        case FORCE_FIELD_F:
+            return std::make_tuple(fx, fy);
+    }
 }
 
 //visualize: This is the main visualization function
@@ -347,14 +392,14 @@ void visualize(void)
 				py3 = hn + (fftw_real)j * hn;
 				idx3 = (j * DIM) + (i + 1);
 
-                set_colormap(rho[idx0]);    glVertex2f(px0, py0);
-                set_colormap(rho[idx1]);    glVertex2f(px1, py1);
-                set_colormap(rho[idx2]);    glVertex2f(px2, py2);
+                set_colormap(get_vis_data(idx0));    glVertex2f(px0, py0);
+                set_colormap(get_vis_data(idx1));    glVertex2f(px1, py1);
+                set_colormap(get_vis_data(idx2));    glVertex2f(px2, py2);
 
 
-                set_colormap(rho[idx0]);    glVertex2f(px0, py0);
-                set_colormap(rho[idx2]);    glVertex2f(px2, py2);
-                set_colormap(rho[idx3]);    glVertex2f(px3, py3);
+                set_colormap(get_vis_data(idx0));    glVertex2f(px0, py0);
+                set_colormap(get_vis_data(idx2));    glVertex2f(px2, py2);
+                set_colormap(get_vis_data(idx3));    glVertex2f(px3, py3);
 			}
 		}
 		glEnd();
@@ -362,14 +407,19 @@ void visualize(void)
 
 	if (draw_vecs)
 	{
+        auto t = get_vec_data();
+        fftw_real *data_x = std::get<0>(t);
+        fftw_real *data_y = std::get<1>(t);
+
 		glBegin(GL_LINES);              //draw velocities
 		for (i = 0; i < DIM; i++)
 			for (j = 0; j < DIM; j++)
 			{
 				idx = (j * DIM) + i;
-				direction_to_color(vx[idx],vy[idx],color_dir);
+                direction_to_color(idx,color_dir);
 				glVertex2f(wn + (fftw_real)i * wn, hn + (fftw_real)j * hn);
-				glVertex2f((wn + (fftw_real)i * wn) + vec_scale * vx[idx], (hn + (fftw_real)j * hn) + vec_scale * vy[idx]);
+                glVertex2f((wn + (fftw_real)i * wn) + vec_scale * data_x[idx],
+                           (hn + (fftw_real)j * hn) + vec_scale * data_y[idx]);
 			}
 		glEnd();
 	}
