@@ -110,8 +110,6 @@ void SmokeGLWidget::set_minmax(double value)
     else
         fluids::max_col = (float)value;
     trigger_colormap();
-    qDebug() << "min:" << fluids::min_col << "," << fluids::max_col;
-
 }
 
 void SmokeGLWidget::set_color_data(bool toggle)
@@ -119,7 +117,6 @@ void SmokeGLWidget::set_color_data(bool toggle)
     if (toggle) {
         QRadioButton *button = static_cast<QRadioButton *>(sender());
         int digit = (button->objectName().end()-1)->digitValue();
-        qDebug() << digit;
         if (digit >= 0)
             fluids::color_data_type = (vis_data_type)digit;
         else

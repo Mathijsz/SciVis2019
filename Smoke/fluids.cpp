@@ -304,12 +304,13 @@ void set_colormap(float vy)
 fftw_real get_vis_data(int idx)
 {
     switch (color_data_type) {
-        case DENSITY_RHO:
-            return rho[idx];
         case VELOCITY_V:
             return sqrt(vx[idx]*vx[idx] + vy[idx]*vy[idx]);
         case FORCE_FIELD_F:
             return sqrt(fx[idx]*fx[idx] + fy[idx]*fy[idx]);
+        case DENSITY_RHO:
+        default:
+            return rho[idx];
     }
 }
 
@@ -352,6 +353,7 @@ std::tuple<fftw_real*,fftw_real*> get_vec_data()
         case VELOCITY_V:
             return std::make_tuple(vx, vy);
         case FORCE_FIELD_F:
+        default:
             return std::make_tuple(fx, fy);
     }
 }
