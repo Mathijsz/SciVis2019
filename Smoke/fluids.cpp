@@ -317,14 +317,25 @@ fftw_real get_vis_data(int idx)
     }
 }
 
-std::tuple<fftw_real*,fftw_real*> get_vec_data()
+fftw_real get_vec_data_x(int idx)
 {
     switch (vector_data_type) {
         case VELOCITY_V:
-            return std::make_tuple(vx, vy);
+            return vx[idx];
         case FORCE_FIELD_F:
         default:
-            return std::make_tuple(fx, fy);
+            return fx[idx];
+    }
+}
+
+fftw_real get_vec_data_y(int idx)
+{
+    switch (vector_data_type) {
+        case VELOCITY_V:
+            return vy[idx];
+        case FORCE_FIELD_F:
+        default:
+            return fy[idx];
     }
 }
 
@@ -333,7 +344,7 @@ float get_interpolated_value(float q1, float q2, float dx)
     return (q2 - q1)*dx + q1;
 }
 
-fftw_real get_data_interpol(float y, float x)
+fftw_real get_data_interpol(fftw_real (*f)(int), float y, float x)
 {
     x = (x / DIM_X) * DIM;
     y = (y / DIM_Y) * DIM;
@@ -343,13 +354,13 @@ fftw_real get_data_interpol(float y, float x)
             int y1 = floor(y);
             int x2 = ceil(x);
             int y2 = ceil(y);
-            float r1 = get_interpolated_value(get_vis_data(x1 + DIM * y1), get_vis_data(x1 + DIM * y2), fmod(y, 1));
-            float r2 = get_interpolated_value(get_vis_data(x2 + DIM * y1), get_vis_data(x2 + DIM * y2), fmod(y, 1));
+            float r1 = get_interpolated_value(f(x1 + DIM * y1), f(x1 + DIM * y2), fmod(y, 1));
+            float r2 = get_interpolated_value(f(x2 + DIM * y1), f(x2 + DIM * y2), fmod(y, 1));
             return get_interpolated_value(r1, r2, fmod(x, 1));
         }
         case NEAREST_NEIGHBOR:
         default:
-            return get_vis_data(round(y) * DIM + round(x));
+            return f(round(y) * DIM + round(x));
         }
 }
 
@@ -390,7 +401,6 @@ void direction_to_color(int idx, int method)
 void visualize(void)
 {
     int        i, j;
-    float val;
     fftw_real  wn = (fftw_real)winWidth / (fftw_real)(DIM_X + 1);   // Grid cell width
     fftw_real  hn = (fftw_real)winHeight / (fftw_real)(DIM_Y + 1);  // Grid cell heigh
 
@@ -406,22 +416,22 @@ void visualize(void)
 			{
 				px0 = wn + (fftw_real)i * wn;
 				py0 = hn + (fftw_real)j * hn;
-                val0 = get_data_interpol(j, i);
+                val0 = get_data_interpol(&get_vis_data, j, i);
 
 
 				px1 = wn + (fftw_real)i * wn;
 				py1 = hn + (fftw_real)(j + 1) * hn;
-                val1 = get_data_interpol((j + 1), i);
+                val1 = get_data_interpol(&get_vis_data, (j + 1), i);
 
 
 				px2 = wn + (fftw_real)(i + 1) * wn;
 				py2 = hn + (fftw_real)(j + 1) * hn;
-                val2 = get_data_interpol(j + 1, i + 1);
+                val2 = get_data_interpol(&get_vis_data, j + 1, i + 1);
 
 
 				px3 = wn + (fftw_real)(i + 1) * wn;
 				py3 = hn + (fftw_real)j * hn;
-                val3 = get_data_interpol(j, i + 1);
+                val3 = get_data_interpol(&get_vis_data, j, i + 1);
 
                 set_colormap(val0);    glVertex2f(px0, py0);
                 set_colormap(val1);    glVertex2f(px1, py1);
@@ -437,20 +447,15 @@ void visualize(void)
 	}
 
 	if (draw_vecs)
-	{
-        auto t = get_vec_data();
-        fftw_real *data_x = std::get<0>(t);
-        fftw_real *data_y = std::get<1>(t);
-
+    {
 		glBegin(GL_LINES);              //draw velocities
         for (i = 0; i < DIM_X; i++)
             for (j = 0; j < DIM_Y; j++)
 			{
-                val = get_data_interpol(j, i);
-                direction_to_color(idx,color_dir);
+                direction_to_color(j * DIM_X + i, color_dir);
 				glVertex2f(wn + (fftw_real)i * wn, hn + (fftw_real)j * hn);
-                glVertex2f((wn + (fftw_real)i * wn) + vec_scale * data_x[val],
-                           (hn + (fftw_real)j * hn) + vec_scale * data_y[val]);
+                glVertex2f((wn + (fftw_real)i * wn) + vec_scale * get_data_interpol(&get_vec_data_x, j, i),
+                           (hn + (fftw_real)j * hn) + vec_scale * get_data_interpol(&get_vec_data_y, j, i));
 			}
 		glEnd();
 	}
