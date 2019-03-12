@@ -20,6 +20,12 @@ typedef enum vis_data_type {
     NUMDATATYPES
 } vis_data_type;
 
+typedef enum interpol_type {
+    NEAREST_NEIGHBOR,
+    BILINEAR,
+    NUMINTERPOLTYPES
+} interpol_type;
+
 namespace fluids {
 
     extern int color_dir;
@@ -32,7 +38,10 @@ namespace fluids {
     extern float max_col;
     extern vis_data_type color_data_type;
     extern vis_data_type vector_data_type;
+    extern interpol_type interpolation;
 
+    extern int DIM_X;
+    extern int DIM_Y;
 
     void init_simulation(int n);
     void display(void);

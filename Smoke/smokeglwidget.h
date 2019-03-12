@@ -27,6 +27,10 @@ public slots:
     void set_color_data(bool toggle);
     void set_vector_data(bool toggle);
 
+    void set_dim_x(int x);
+    void set_dim_y(int y);
+    void set_interpol_type(bool toggle);
+
 signals:
     void trigger_colormap();
 

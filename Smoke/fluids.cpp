@@ -1,4 +1,4 @@
-// Usage: Drag with the mouse to add smoke to the fluid. This will also move a "rotor" that disturbs 
+// Usage: Drag with the mouse to add smoke to the fluid. This will also move a "rotor" that disturbs
 //        the velocity field at the mouse location. Press the indicated keys to change options
 //-------------------------------------------------------------------------------------------------- 
 
@@ -15,6 +15,8 @@ namespace fluids {
 
 //--- SIMULATION PARAMETERS ------------------------------------------------------------------------
 const int DIM = 50;             //size of simulation grid
+int DIM_X = 50;
+int DIM_Y = 50;
 double dt = 0.4;                //simulation time step
 float visc = 0.001;             //fluid viscosity
 fftw_real *vx, *vy;             //(vx,vy)   = velocity field at the current moment
@@ -41,6 +43,7 @@ float min_col = 0.0;
 float max_col = 1.0;
 vis_data_type color_data_type = DENSITY_RHO;
 vis_data_type vector_data_type = VELOCITY_V;
+interpol_type interpolation = NEAREST_NEIGHBOR;
 
 
 //------ SIMULATION CODE STARTS HERE -----------------------------------------------------------------
@@ -88,86 +91,86 @@ float min(float x, float y)
 { return x <= y ? x : y; }
 
 //solve: Solve (compute) one step of the fluid flow simulation
-void solve(int n, fftw_real* vx, fftw_real* vy, fftw_real* vx0, fftw_real* vy0, fftw_real visc, fftw_real dt) 
+void solve(int n, fftw_real* vx, fftw_real* vy, fftw_real* vx0, fftw_real* vy0, fftw_real visc, fftw_real dt)
 {
 	fftw_real x, y, x0, y0, f, r, U[2], V[2], s, t;
 	int i, j, i0, j0, i1, j1;
 
-	for (i=0;i<n*n;i++) 
+    for (i=0;i<n*n;i++)
 	{ vx[i] += dt*vx0[i]; vx0[i] = vx[i]; vy[i] += dt*vy0[i]; vy0[i] = vy[i]; }    
 
-	for ( x=0.5f/n,i=0 ; i<n ; i++,x+=1.0f/n ) 
-	   for ( y=0.5f/n,j=0 ; j<n ; j++,y+=1.0f/n ) 
+    for ( x=0.5f/n,i=0 ; i<n ; i++,x+=1.0f/n )
+       for ( y=0.5f/n,j=0 ; j<n ; j++,y+=1.0f/n )
 	   {
-		  x0 = n*(x-dt*vx0[i+n*j])-0.5f; 
-		  y0 = n*(y-dt*vy0[i+n*j])-0.5f;
+          x0 = n*(x-dt*vx0[i+n*j])-0.5f;
+          y0 = n*(y-dt*vy0[i+n*j])-0.5f;
 		  i0 = clamp(x0); s = x0-i0;
-		  i0 = (n+(i0%n))%n;
-		  i1 = (i0+1)%n;
+          i0 = (n+(i0%n))%n;
+          i1 = (i0+1)%n;
 		  j0 = clamp(y0); t = y0-j0;
-		  j0 = (n+(j0%n))%n;
-		  j1 = (j0+1)%n;
-		  vx[i+n*j] = (1-s)*((1-t)*vx0[i0+n*j0]+t*vx0[i0+n*j1])+s*((1-t)*vx0[i1+n*j0]+t*vx0[i1+n*j1]);
-		  vy[i+n*j] = (1-s)*((1-t)*vy0[i0+n*j0]+t*vy0[i0+n*j1])+s*((1-t)*vy0[i1+n*j0]+t*vy0[i1+n*j1]);
+          j0 = (n+(j0%n))%n;
+          j1 = (j0+1)%n;
+          vx[i+n*j] = (1-s)*((1-t)*vx0[i0+n*j0]+t*vx0[i0+n*j1])+s*((1-t)*vx0[i1+n*j0]+t*vx0[i1+n*j1]);
+          vy[i+n*j] = (1-s)*((1-t)*vy0[i0+n*j0]+t*vy0[i0+n*j1])+s*((1-t)*vy0[i1+n*j0]+t*vy0[i1+n*j1]);
 	   }     
 	
-	for(i=0; i<n; i++)
-		for(j=0; j<n; j++) 
-			{  vx0[i+(n+2)*j] = vx[i+n*j]; vy0[i+(n+2)*j] = vy[i+n*j]; }
+    for(i=0; i<n; i++)
+        for(j=0; j<n; j++)
+            {  vx0[i+(n+2)*j] = vx[i+n*j]; vy0[i+(n+2)*j] = vy[i+n*j]; }
 
 	FFT(1,vx0);
 	FFT(1,vy0);
 
-	for (i=0;i<=n;i+=2) 
+    for (i=0;i<=n;i+=2)
 	{
 		x = 0.5f*i;
-		for (j=0;j<n;j++) 
+        for (j=0;j<n;j++)
 		{
-			y = j<=n/2 ? (fftw_real)j : (fftw_real)j-n;
+            y = j<=n/2 ? (fftw_real)j : (fftw_real)j-n;
 			r = x*x+y*y;
 			if ( r==0.0f ) continue;
 			f = (fftw_real)exp(-r*dt*visc);
-			U[0] = vx0[i  +(n+2)*j]; V[0] = vy0[i  +(n+2)*j];
-			U[1] = vx0[i+1+(n+2)*j]; V[1] = vy0[i+1+(n+2)*j];
+            U[0] = vx0[i  +(n+2)*j]; V[0] = vy0[i  +(n+2)*j];
+            U[1] = vx0[i+1+(n+2)*j]; V[1] = vy0[i+1+(n+2)*j];
 
-			vx0[i  +(n+2)*j] = f*((1-x*x/r)*U[0]     -x*y/r *V[0]);
-			vx0[i+1+(n+2)*j] = f*((1-x*x/r)*U[1]     -x*y/r *V[1]);
-			vy0[i+  (n+2)*j] = f*(  -y*x/r *U[0] + (1-y*y/r)*V[0]);
-			vy0[i+1+(n+2)*j] = f*(  -y*x/r *U[1] + (1-y*y/r)*V[1]);
+            vx0[i  +(n+2)*j] = f*((1-x*x/r)*U[0]     -x*y/r *V[0]);
+            vx0[i+1+(n+2)*j] = f*((1-x*x/r)*U[1]     -x*y/r *V[1]);
+            vy0[i+  (n+2)*j] = f*(  -y*x/r *U[0] + (1-y*y/r)*V[0]);
+            vy0[i+1+(n+2)*j] = f*(  -y*x/r *U[1] + (1-y*y/r)*V[1]);
 		}
 	}
 
 	FFT(-1,vx0); 
 	FFT(-1,vy0);
 
-	f = 1.0/(n*n);
-	for (i=0;i<n;i++)
-	   for (j=0;j<n;j++) 
-	   { vx[i+n*j] = f*vx0[i+(n+2)*j]; vy[i+n*j] = f*vy0[i+(n+2)*j]; }
+    f = 1.0/(n*n);
+    for (i=0;i<n;i++)
+       for (j=0;j<n;j++)
+       { vx[i+n*j] = f*vx0[i+(n+2)*j]; vy[i+n*j] = f*vy0[i+(n+2)*j]; }
 } 
 
 
 // diffuse_matter: This function diffuses matter that has been placed in the velocity field. It's almost identical to the
 // velocity diffusion step in the function above. The input matter densities are in rho0 and the result is written into rho.
-void diffuse_matter(int n, fftw_real *vx, fftw_real *vy, fftw_real *rho, fftw_real *rho0, fftw_real dt) 
+void diffuse_matter(int n, fftw_real *vx, fftw_real *vy, fftw_real *rho, fftw_real *rho0, fftw_real dt)
 {
 	fftw_real x, y, x0, y0, s, t;
 	int i, j, i0, j0, i1, j1;
 
-	for ( x=0.5f/n,i=0 ; i<n ; i++,x+=1.0f/n )
-		for ( y=0.5f/n,j=0 ; j<n ; j++,y+=1.0f/n ) 
+    for ( x=0.5f/n,i=0 ; i<n ; i++,x+=1.0f/n )
+        for ( y=0.5f/n,j=0 ; j<n ; j++,y+=1.0f/n )
 		{
-			x0 = n*(x-dt*vx[i+n*j])-0.5f; 
-			y0 = n*(y-dt*vy[i+n*j])-0.5f;
+            x0 = n*(x-dt*vx[i+n*j])-0.5f;
+            y0 = n*(y-dt*vy[i+n*j])-0.5f;
 			i0 = clamp(x0);
 			s = x0-i0;
-			i0 = (n+(i0%n))%n;
-			i1 = (i0+1)%n;
+            i0 = (n+(i0%n))%n;
+            i1 = (i0+1)%n;
 			j0 = clamp(y0);
 			t = y0-j0;
-			j0 = (n+(j0%n))%n;
-			j1 = (j0+1)%n;
-			rho[i+n*j] = (1-s)*((1-t)*rho0[i0+n*j0]+t*rho0[i0+n*j1])+s*((1-t)*rho0[i1+n*j0]+t*rho0[i1+n*j1]);
+            j0 = (n+(j0%n))%n;
+            j1 = (j0+1)%n;
+            rho[i+n*j] = (1-s)*((1-t)*rho0[i0+n*j0]+t*rho0[i0+n*j1])+s*((1-t)*rho0[i1+n*j0]+t*rho0[i1+n*j1]);
 		}
 }
 
@@ -176,7 +179,7 @@ void diffuse_matter(int n, fftw_real *vx, fftw_real *vy, fftw_real *rho, fftw_re
 void set_forces(void) 
 {
 	int i;
-	for (i = 0; i < DIM * DIM; i++) 
+    for (i = 0; i < DIM * DIM; i++)
 	{
 		rho0[i]  = 0.995 * rho[i];
 		fx[i] *= 0.85; 
@@ -197,8 +200,8 @@ void do_one_simulation_step(void)
 	if (!frozen)
 	{
 		set_forces();
-		solve(DIM, vx, vy, vx0, vy0, visc, dt);
-		diffuse_matter(DIM, vx, vy, rho, rho0, dt);
+        solve(DIM, vx, vy, vx0, vy0, visc, dt);
+        diffuse_matter(DIM, vx, vy, rho, rho0, dt);
 #ifdef USE_GLUT
         glutPostRedisplay();
 #endif
@@ -314,6 +317,42 @@ fftw_real get_vis_data(int idx)
     }
 }
 
+std::tuple<fftw_real*,fftw_real*> get_vec_data()
+{
+    switch (vector_data_type) {
+        case VELOCITY_V:
+            return std::make_tuple(vx, vy);
+        case FORCE_FIELD_F:
+        default:
+            return std::make_tuple(fx, fy);
+    }
+}
+
+float get_interpolated_value(float q1, float q2, float dx)
+{
+    return (q2 - q1)*dx + q1;
+}
+
+fftw_real get_data_interpol(float y, float x)
+{
+    x = (x / DIM_X) * DIM;
+    y = (y / DIM_Y) * DIM;
+    switch (interpolation) {
+        case BILINEAR: {
+            int x1 = floor(x);
+            int y1 = floor(y);
+            int x2 = ceil(x);
+            int y2 = ceil(y);
+            float r1 = get_interpolated_value(get_vis_data(x1 + DIM * y1), get_vis_data(x1 + DIM * y2), fmod(y, 1));
+            float r2 = get_interpolated_value(get_vis_data(x2 + DIM * y1), get_vis_data(x2 + DIM * y2), fmod(y, 1));
+            return get_interpolated_value(r1, r2, fmod(x, 1));
+        }
+        case NEAREST_NEIGHBOR:
+        default:
+            return get_vis_data(round(y) * DIM + round(x));
+        }
+}
+
 //direction_to_color: Set the current color by mapping a direction vector (x,y), using
 //                    the color mapping method 'method'. If method==1, map the vector direction
 //                    using a rainbow colormap. If method==0, simply use the white color
@@ -341,67 +380,57 @@ void direction_to_color(int idx, int method)
         if (enable_bands) {
             with_banding(func, get_vis_data(idx), &r, &g, &b, bands);
         } else {
-            (*func)(get_vis_data(idx), &r, &g, &b);
+            func(get_vis_data(idx), &r, &g, &b);
         }
     }
 	glColor3f(r,g,b);
 }
 
-std::tuple<fftw_real*,fftw_real*> get_vec_data()
-{
-    switch (vector_data_type) {
-        case VELOCITY_V:
-            return std::make_tuple(vx, vy);
-        case FORCE_FIELD_F:
-        default:
-            return std::make_tuple(fx, fy);
-    }
-}
-
 //visualize: This is the main visualization function
 void visualize(void)
 {
-	int        i, j, idx;
-	fftw_real  wn = (fftw_real)winWidth / (fftw_real)(DIM + 1);   // Grid cell width
-	fftw_real  hn = (fftw_real)winHeight / (fftw_real)(DIM + 1);  // Grid cell heigh
+    int        i, j;
+    float val;
+    fftw_real  wn = (fftw_real)winWidth / (fftw_real)(DIM_X + 1);   // Grid cell width
+    fftw_real  hn = (fftw_real)winHeight / (fftw_real)(DIM_Y + 1);  // Grid cell heigh
 
 	if (draw_smoke)
 	{   
-		int idx0, idx1, idx2, idx3;
+        float val0, val1, val2, val3;
 		double px0, py0, px1, py1, px2, py2, px3, py3;
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glBegin(GL_TRIANGLES);
-        for (j = 0; j < DIM - 1; j++)            //draw smoke
+        for (j = 0; j < DIM_Y - 1; j++)            //draw smoke
 		{
-            for (i = 0; i < DIM - 1; i++)
+            for (i = 0; i < DIM_X - 1; i++)
 			{
 				px0 = wn + (fftw_real)i * wn;
 				py0 = hn + (fftw_real)j * hn;
-				idx0 = (j * DIM) + i;
+                val0 = get_data_interpol(j, i);
 
 
 				px1 = wn + (fftw_real)i * wn;
 				py1 = hn + (fftw_real)(j + 1) * hn;
-				idx1 = ((j + 1) * DIM) + i;
+                val1 = get_data_interpol((j + 1), i);
 
 
 				px2 = wn + (fftw_real)(i + 1) * wn;
 				py2 = hn + (fftw_real)(j + 1) * hn;
-				idx2 = ((j + 1) * DIM) + (i + 1);
+                val2 = get_data_interpol(j + 1, i + 1);
 
 
 				px3 = wn + (fftw_real)(i + 1) * wn;
 				py3 = hn + (fftw_real)j * hn;
-				idx3 = (j * DIM) + (i + 1);
+                val3 = get_data_interpol(j, i + 1);
 
-                set_colormap(get_vis_data(idx0));    glVertex2f(px0, py0);
-                set_colormap(get_vis_data(idx1));    glVertex2f(px1, py1);
-                set_colormap(get_vis_data(idx2));    glVertex2f(px2, py2);
+                set_colormap(val0);    glVertex2f(px0, py0);
+                set_colormap(val1);    glVertex2f(px1, py1);
+                set_colormap(val2);    glVertex2f(px2, py2);
 
 
-                set_colormap(get_vis_data(idx0));    glVertex2f(px0, py0);
-                set_colormap(get_vis_data(idx2));    glVertex2f(px2, py2);
-                set_colormap(get_vis_data(idx3));    glVertex2f(px3, py3);
+                set_colormap(val0);    glVertex2f(px0, py0);
+                set_colormap(val2);    glVertex2f(px2, py2);
+                set_colormap(val3);    glVertex2f(px3, py3);
 			}
 		}
 		glEnd();
@@ -414,14 +443,14 @@ void visualize(void)
         fftw_real *data_y = std::get<1>(t);
 
 		glBegin(GL_LINES);              //draw velocities
-		for (i = 0; i < DIM; i++)
-			for (j = 0; j < DIM; j++)
+        for (i = 0; i < DIM_X; i++)
+            for (j = 0; j < DIM_Y; j++)
 			{
-				idx = (j * DIM) + i;
+                val = get_data_interpol(j, i);
                 direction_to_color(idx,color_dir);
 				glVertex2f(wn + (fftw_real)i * wn, hn + (fftw_real)j * hn);
-                glVertex2f((wn + (fftw_real)i * wn) + vec_scale * data_x[idx],
-                           (hn + (fftw_real)j * hn) + vec_scale * data_y[idx]);
+                glVertex2f((wn + (fftw_real)i * wn) + vec_scale * data_x[val],
+                           (hn + (fftw_real)j * hn) + vec_scale * data_y[val]);
 			}
 		glEnd();
 	}
@@ -486,12 +515,12 @@ void drag(int mx, int my)
 	static int lmx=0,lmy=0;             //remembers last mouse location
 
 	// Compute the array index that corresponds to the cursor location 
-	xi = (int)clamp((double)(DIM + 1) * ((double)mx / (double)winWidth));
-	yi = (int)clamp((double)(DIM + 1) * ((double)(winHeight - my) / (double)winHeight));
+    xi = (int)clamp((double)(DIM + 1) * ((double)mx / (double)winWidth));
+    yi = (int)clamp((double)(DIM + 1) * ((double)(winHeight - my) / (double)winHeight));
 
 	X = xi; Y = yi;
 
-	if (X > (DIM - 1))  X = DIM - 1; if (Y > (DIM - 1))  Y = DIM - 1;
+    if (X > (DIM - 1))  X = DIM - 1; if (Y > (DIM - 1))  Y = DIM - 1;
 	if (X < 0) X = 0; if (Y < 0) Y = 0;
 
 	// Add force at the cursor location 
@@ -499,9 +528,9 @@ void drag(int mx, int my)
 	dx = mx - lmx; dy = my - lmy;
 	len = sqrt(dx * dx + dy * dy);
 	if (len != 0.0) {  dx *= 0.1 / len; dy *= 0.1 / len; }
-	fx[Y * DIM + X] += dx; 
-	fy[Y * DIM + X] += dy;
-	rho[Y * DIM + X] = 10.0f;
+    fx[Y * DIM + X] += dx;
+    fy[Y * DIM + X] += dy;
+    rho[Y * DIM + X] = 10.0f;
 	lmx = mx; lmy = my;
 }
 

@@ -135,3 +135,25 @@ void SmokeGLWidget::set_vector_data(bool toggle)
             qDebug() << "Invalid radio button sender for setting data type";
     }
 }
+
+void SmokeGLWidget::set_dim_x(int x)
+{
+    fluids::DIM_X = x;
+}
+
+void SmokeGLWidget::set_dim_y(int y)
+{
+    fluids::DIM_Y = y;
+}
+
+void SmokeGLWidget::set_interpol_type(bool toggle)
+{
+    if (toggle) {
+        QRadioButton *button = static_cast<QRadioButton *>(sender());
+        int digit = (button->objectName().end()-1)->digitValue();
+        if (digit >= 0)
+            fluids::interpolation = (interpol_type)digit;
+        else
+            qDebug() << "Invalid radio button sender for setting interpolation type";
+    }
+}

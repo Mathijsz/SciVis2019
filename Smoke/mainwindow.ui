@@ -40,7 +40,7 @@
         <property name="minimumSize">
          <size>
           <width>500</width>
-          <height>300</height>
+          <height>275</height>
          </size>
         </property>
         <property name="focusPolicy">
@@ -131,159 +131,389 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="ColorSettings">
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
-        <item>
-         <widget class="QGroupBox" name="ColorData">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>50</height>
-           </size>
-          </property>
-          <property name="title">
-           <string>Color data</string>
-          </property>
-          <widget class="QRadioButton" name="colorData_0">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>20</y>
-             <width>120</width>
-             <height>22</height>
-            </rect>
-           </property>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>550</width>
+        <height>200</height>
+       </size>
+      </property>
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="QWidget" name="colorTab">
+       <attribute name="title">
+        <string>Colors</string>
+       </attribute>
+       <widget class="QWidget" name="">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>638</width>
+          <height>162</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="ColorSettings">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QGroupBox" name="ColorData">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>50</height>
+              </size>
+             </property>
+             <property name="title">
+              <string>Color data</string>
+             </property>
+             <widget class="QRadioButton" name="colorData_0">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>20</y>
+                <width>120</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Density</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+             <widget class="QRadioButton" name="colorData_1">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>40</y>
+                <width>120</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Fluid Velocity</string>
+              </property>
+             </widget>
+             <widget class="QRadioButton" name="colorData_2">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>60</y>
+                <width>120</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Force field</string>
+              </property>
+             </widget>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="VectorData">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>50</height>
+              </size>
+             </property>
+             <property name="title">
+              <string>Vector data</string>
+             </property>
+             <widget class="QRadioButton" name="vectorData_1">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>20</y>
+                <width>120</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Fluid Velocity</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+             <widget class="QRadioButton" name="vectorData_2">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>40</y>
+                <width>120</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Force field</string>
+              </property>
+             </widget>
+             <zorder>vectorData_1</zorder>
+             <zorder>vectorData_2</zorder>
+             <zorder>ColorData</zorder>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="Colormap">
            <property name="minimumSize">
             <size>
-             <width>120</width>
-             <height>20</height>
+             <width>200</width>
+             <height>160</height>
             </size>
            </property>
-           <property name="text">
-            <string>Density</string>
+           <property name="title">
+            <string>Colormap</string>
            </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
+           <widget class="QRadioButton" name="radioButton_0">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>20</y>
+              <width>120</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Greyscale</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QRadioButton" name="radioButton_1">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>40</y>
+              <width>120</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Rainbow</string>
+            </property>
+           </widget>
+           <widget class="QRadioButton" name="radioButton_3">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>60</y>
+              <width>120</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Blue to yellow</string>
+            </property>
+           </widget>
+           <widget class="QRadioButton" name="radioButton_4">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>80</y>
+              <width>135</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>135</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Blue to white to red</string>
+            </property>
+           </widget>
+           <widget class="QRadioButton" name="radioButton_2">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>100</y>
+              <width>120</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Red to white</string>
+            </property>
+           </widget>
+           <widget class="QSpinBox" name="bandsSpinBox">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>130</y>
+              <width>81</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="suffix">
+             <string> bands</string>
+            </property>
+            <property name="minimum">
+             <number>2</number>
+            </property>
+            <property name="maximum">
+             <number>255</number>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="bandsCheckBox">
+            <property name="geometry">
+             <rect>
+              <x>90</x>
+              <y>130</y>
+              <width>71</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Toggle</string>
+            </property>
+           </widget>
           </widget>
-          <widget class="QRadioButton" name="colorData_1">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>40</y>
-             <width>120</width>
-             <height>22</height>
-            </rect>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Fluid Velocity</string>
-           </property>
-          </widget>
-          <widget class="QRadioButton" name="colorData_2">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>60</y>
-             <width>120</width>
-             <height>22</height>
-            </rect>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Force field</string>
-           </property>
-          </widget>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="VectorData">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>50</height>
-           </size>
-          </property>
-          <property name="title">
-           <string>Vector data</string>
-          </property>
-          <widget class="QRadioButton" name="vectorData_1">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>20</y>
-             <width>120</width>
-             <height>22</height>
-            </rect>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Fluid Velocity</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-          <widget class="QRadioButton" name="vectorData_2">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>40</y>
-             <width>120</width>
-             <height>22</height>
-            </rect>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Force field</string>
-           </property>
-          </widget>
-          <zorder>Colormap</zorder>
-          <zorder>vectorData_1</zorder>
-          <zorder>vectorData_2</zorder>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="Colormap">
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="simTab">
+       <attribute name="title">
+        <string>Simulation</string>
+       </attribute>
+       <widget class="QSpinBox" name="simHeight">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>40</y>
+          <width>91</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="prefix">
+         <string>height: </string>
+        </property>
+        <property name="minimum">
+         <number>4</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+        <property name="value">
+         <number>50</number>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="simWidth">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>91</width>
+          <height>27</height>
+         </rect>
+        </property>
+        <property name="prefix">
+         <string>width: </string>
+        </property>
+        <property name="minimum">
+         <number>4</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+        <property name="value">
+         <number>50</number>
+        </property>
+       </widget>
+       <widget class="QGroupBox" name="interpolType">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>70</y>
+          <width>313</width>
+          <height>76</height>
+         </rect>
+        </property>
         <property name="minimumSize">
          <size>
-          <width>200</width>
-          <height>160</height>
+          <width>100</width>
+          <height>50</height>
          </size>
         </property>
         <property name="title">
-         <string>Colormap</string>
+         <string>Interpolation</string>
         </property>
-        <widget class="QRadioButton" name="radioButton_0">
+        <widget class="QRadioButton" name="interpol_0">
          <property name="geometry">
           <rect>
-           <x>10</x>
+           <x>0</x>
            <y>20</y>
-           <width>120</width>
-           <height>20</height>
+           <width>131</width>
+           <height>22</height>
           </rect>
          </property>
          <property name="minimumSize">
@@ -293,132 +523,38 @@
           </size>
          </property>
          <property name="text">
-          <string>Greyscale</string>
+          <string>Nearest neighbor</string>
          </property>
          <property name="checked">
           <bool>true</bool>
          </property>
         </widget>
-        <widget class="QRadioButton" name="radioButton_1">
+        <widget class="QRadioButton" name="interpol_1">
          <property name="geometry">
           <rect>
-           <x>10</x>
+           <x>0</x>
            <y>40</y>
            <width>120</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>120</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Rainbow</string>
-         </property>
-        </widget>
-        <widget class="QRadioButton" name="radioButton_3">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>60</y>
-           <width>120</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>120</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Blue to yellow</string>
-         </property>
-        </widget>
-        <widget class="QRadioButton" name="radioButton_4">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>80</y>
-           <width>135</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>135</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Blue to white to red</string>
-         </property>
-        </widget>
-        <widget class="QRadioButton" name="radioButton_2">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>100</y>
-           <width>120</width>
-           <height>20</height>
-          </rect>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>120</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Red to white</string>
-         </property>
-        </widget>
-        <widget class="QSpinBox" name="bandsSpinBox">
-         <property name="geometry">
-          <rect>
-           <x>10</x>
-           <y>130</y>
-           <width>81</width>
            <height>22</height>
           </rect>
          </property>
-         <property name="suffix">
-          <string> bands</string>
-         </property>
-         <property name="minimum">
-          <number>2</number>
-         </property>
-         <property name="maximum">
-          <number>255</number>
-         </property>
-        </widget>
-        <widget class="QCheckBox" name="bandsCheckBox">
-         <property name="geometry">
-          <rect>
-           <x>90</x>
-           <y>130</y>
-           <width>71</width>
-           <height>22</height>
-          </rect>
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>20</height>
+          </size>
          </property>
          <property name="text">
-          <string>Toggle</string>
+          <string>Bilinear</string>
          </property>
         </widget>
-        <zorder>radioButton_0</zorder>
-        <zorder>radioButton_1</zorder>
-        <zorder>radioButton_3</zorder>
-        <zorder>radioButton_4</zorder>
-        <zorder>radioButton_2</zorder>
-        <zorder>bandsSpinBox</zorder>
-        <zorder>bandsCheckBox</zorder>
-        <zorder>smokewidget</zorder>
-        <zorder>ColorData</zorder>
        </widget>
-      </item>
-     </layout>
+       <zorder>Colormap</zorder>
+       <zorder>simHeight</zorder>
+       <zorder>simWidth</zorder>
+       <zorder>interpolType</zorder>
+      </widget>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -440,6 +576,9 @@
     <slot>set_minmax(double)</slot>
     <slot>set_vector_data(bool)</slot>
     <slot>set_color_data(bool)</slot>
+    <slot>set_dim_x(int)</slot>
+    <slot>set_dim_y(int)</slot>
+    <slot>set_interpol_type(bool)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -752,6 +891,70 @@
     <hint type="destinationlabel">
      <x>272</x>
      <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>simHeight</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_dim_y(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>52</x>
+     <y>391</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>simWidth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_dim_x(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>52</x>
+     <y>361</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>interpol_0</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_interpol_type(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>77</x>
+     <y>438</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>interpol_1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_interpol_type(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>458</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
     </hint>
    </hints>
   </connection>
