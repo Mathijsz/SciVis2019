@@ -367,15 +367,15 @@ fftw_real get_data_interpol(fftw_real (*f)(int), float y, float x)
 //direction_to_color: Set the current color by mapping a direction vector (x,y), using
 //                    the color mapping method 'method'. If method==1, map the vector direction
 //                    using a rainbow colormap. If method==0, simply use the white color
-void direction_to_color(int idx, int method)
+void direction_to_color(int y, int x, int method)
 {
 	float r,g,b,f;
     if (method)
     {
-        float x = vx[idx];
-        float y = vy[idx];
+        float val_x = get_data_interpol(&get_vec_data_x, y, x);
+        float val_y = get_data_interpol(&get_vec_data_y, y, x);
 
-        f = atan2(y,x) / 3.1415927 + 1;
+        f = atan2(val_y,val_x) / 3.1415927 + 1;
         r = f;
         if(r > 1) r = 2 - r;
         g = f + .66667;
@@ -389,9 +389,9 @@ void direction_to_color(int idx, int method)
     {
         color_func func = get_color_func((colormap)scalar_col);
         if (enable_bands) {
-            with_banding(func, get_vis_data(idx), &r, &g, &b, bands);
+            with_banding(func, get_data_interpol(&get_vis_data, y, x), &r, &g, &b, bands);
         } else {
-            func(get_vis_data(idx), &r, &g, &b);
+            func(get_data_interpol(&get_vis_data, y, x), &r, &g, &b);
         }
     }
 	glColor3f(r,g,b);
@@ -452,7 +452,7 @@ void visualize(void)
         for (i = 0; i < DIM_X; i++)
             for (j = 0; j < DIM_Y; j++)
 			{
-                direction_to_color(j * DIM_X + i, color_dir);
+                direction_to_color(j, i, color_dir);
 				glVertex2f(wn + (fftw_real)i * wn, hn + (fftw_real)j * hn);
                 glVertex2f((wn + (fftw_real)i * wn) + vec_scale * get_data_interpol(&get_vec_data_x, j, i),
                            (hn + (fftw_real)j * hn) + vec_scale * get_data_interpol(&get_vec_data_y, j, i));
