@@ -89,7 +89,7 @@ void SmokeGLWidget::set_hedgehogs(int status)
 
 void SmokeGLWidget::set_smoke(int status)
 {
-    fluids::draw_smoke = status;
+    fluids::enable_smoke = status;
 }
 
 void SmokeGLWidget::set_bands(int bands)
@@ -156,4 +156,9 @@ void SmokeGLWidget::set_interpol_type(bool toggle)
         else
             qDebug() << "Invalid radio button sender for setting interpolation type";
     }
+}
+
+void SmokeGLWidget::set_glyph_scale(int n)
+{
+    fluids::vec_scale = (float)n;
 }

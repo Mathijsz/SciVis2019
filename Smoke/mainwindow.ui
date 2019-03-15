@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>638</width>
-    <height>507</height>
+    <height>514</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -151,7 +151,7 @@
        <attribute name="title">
         <string>Colors</string>
        </attribute>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -288,9 +288,6 @@
                <string>Force field</string>
               </property>
              </widget>
-             <zorder>vectorData_1</zorder>
-             <zorder>vectorData_2</zorder>
-             <zorder>ColorData</zorder>
             </widget>
            </item>
           </layout>
@@ -445,55 +442,11 @@
        <attribute name="title">
         <string>Simulation</string>
        </attribute>
-       <widget class="QSpinBox" name="simHeight">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>40</y>
-          <width>91</width>
-          <height>27</height>
-         </rect>
-        </property>
-        <property name="prefix">
-         <string>height: </string>
-        </property>
-        <property name="minimum">
-         <number>4</number>
-        </property>
-        <property name="maximum">
-         <number>1000</number>
-        </property>
-        <property name="value">
-         <number>50</number>
-        </property>
-       </widget>
-       <widget class="QSpinBox" name="simWidth">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>10</y>
-          <width>91</width>
-          <height>27</height>
-         </rect>
-        </property>
-        <property name="prefix">
-         <string>width: </string>
-        </property>
-        <property name="minimum">
-         <number>4</number>
-        </property>
-        <property name="maximum">
-         <number>1000</number>
-        </property>
-        <property name="value">
-         <number>50</number>
-        </property>
-       </widget>
        <widget class="QGroupBox" name="interpolType">
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>70</y>
+          <y>90</y>
           <width>313</width>
           <height>76</height>
          </rect>
@@ -549,10 +502,101 @@
          </property>
         </widget>
        </widget>
-       <zorder>Colormap</zorder>
-       <zorder>simHeight</zorder>
-       <zorder>simWidth</zorder>
-       <zorder>interpolType</zorder>
+       <widget class="QGroupBox" name="sizeSetings">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>0</y>
+          <width>120</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Size</string>
+        </property>
+        <widget class="QSpinBox" name="simWidth">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>20</y>
+           <width>91</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <property name="prefix">
+          <string>width: </string>
+         </property>
+         <property name="minimum">
+          <number>4</number>
+         </property>
+         <property name="maximum">
+          <number>1000</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+        </widget>
+        <widget class="QSpinBox" name="simHeight">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>50</y>
+           <width>91</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <property name="prefix">
+          <string>height: </string>
+         </property>
+         <property name="minimum">
+          <number>4</number>
+         </property>
+         <property name="maximum">
+          <number>1000</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="glyphSettings">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>0</y>
+          <width>191</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Glyphs</string>
+        </property>
+        <widget class="QSlider" name="glyphSize">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>160</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="minimum">
+          <number>100</number>
+         </property>
+         <property name="maximum">
+          <number>2000</number>
+         </property>
+         <property name="singleStep">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>1000</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -579,6 +623,7 @@
     <slot>set_dim_x(int)</slot>
     <slot>set_dim_y(int)</slot>
     <slot>set_interpol_type(bool)</slot>
+    <slot>set_glyph_scale(int)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -951,6 +996,22 @@
     <hint type="sourcelabel">
      <x>71</x>
      <y>458</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>glyphSize</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_glyph_scale(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>370</y>
     </hint>
     <hint type="destinationlabel">
      <x>272</x>

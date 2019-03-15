@@ -31,6 +31,8 @@ public slots:
     void set_dim_y(int y);
     void set_interpol_type(bool toggle);
 
+    void set_glyph_scale(int n);
+
 signals:
     void trigger_colormap();
 

@@ -1,4 +1,4 @@
-// Usage: Drag with the mouse to add smoke to the fluid. This will also move a "rotor" that disturbs
+﻿// Usage: Drag with the mouse to add smoke to the fluid. This will also move a "rotor" that disturbs
 //        the velocity field at the mouse location. Press the indicated keys to change options
 //-------------------------------------------------------------------------------------------------- 
 
@@ -30,7 +30,7 @@ rfftwnd_plan plan_rc, plan_cr;  //simulation domain discretization
 int   winWidth, winHeight;      //size of the graphics window, in pixels
 int   color_dir = 0;            //use direction color-coding or not
 float vec_scale = 1000;         //scaling of hedgehogs
-int   draw_smoke = 0;           //draw the smoke or not
+int   enable_smoke = 0;           //draw the smoke or not
 int   draw_vecs = 1;            //draw the vector field or not
 
 int   scalar_col = 0;           //method for scalar coloring
@@ -44,6 +44,7 @@ float max_col = 1.0;
 vis_data_type color_data_type = DENSITY_RHO;
 vis_data_type vector_data_type = VELOCITY_V;
 interpol_type interpolation = NEAREST_NEIGHBOR;
+glyph_type glyph_shape = CONES;
 
 
 //------ SIMULATION CODE STARTS HERE -----------------------------------------------------------------
@@ -397,68 +398,114 @@ void direction_to_color(int y, int x, int method)
 	glColor3f(r,g,b);
 }
 
+void draw_hedgehogs(fftw_real hn, fftw_real wn)
+{
+    int i, j;
+    glBegin(GL_LINES);              //draw velocities
+    for (i = 0; i < DIM_X; i++)
+        for (j = 0; j < DIM_Y; j++)
+        {
+            direction_to_color(j, i, color_dir);
+            glVertex2f(wn + (fftw_real)i * wn, hn + (fftw_real)j * hn);
+            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * get_data_interpol(&get_vec_data_x, j, i),
+                       (hn + (fftw_real)j * hn) + vec_scale * get_data_interpol(&get_vec_data_y, j, i));
+        }
+    glEnd();
+}
+
+
+void draw_cones(fftw_real hn, fftw_real wn)
+{
+    int i, j;
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glBegin(GL_TRIANGLES);
+    for (i = 0; i < DIM_X; i++)
+        for (j = 0; j < DIM_Y; j++)
+        {
+            direction_to_color(j, i, color_dir);
+            fftw_real x = get_data_interpol(&get_vec_data_x, j, i);
+            fftw_real y = get_data_interpol(&get_vec_data_y, j, i);
+            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * x*0.2,
+                       (hn + (fftw_real)j * hn) + vec_scale * y*0.2);
+            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * y*0.05,
+                       (hn + (fftw_real)j * hn) + vec_scale * -x*0.05);
+            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * -y*0.05,
+                       (hn + (fftw_real)j * hn) + vec_scale * x*0.05);
+        }
+    glEnd();
+}
+
+void draw_arrows(fftw_real hn, fftw_real wn)
+{
+
+}
+
+void draw_smoke(fftw_real hn, fftw_real wn)
+{
+    int i, j;
+    float val0, val1, val2, val3;
+    double px0, py0, px1, py1, px2, py2, px3, py3;
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glBegin(GL_TRIANGLES);
+    for (j = 0; j < DIM_Y - 1; j++)            //draw smoke
+    {
+        for (i = 0; i < DIM_X - 1; i++)
+        {
+            px0 = wn + (fftw_real)i * wn;
+            py0 = hn + (fftw_real)j * hn;
+            val0 = get_data_interpol(&get_vis_data, j, i);
+
+
+            px1 = wn + (fftw_real)i * wn;
+            py1 = hn + (fftw_real)(j + 1) * hn;
+            val1 = get_data_interpol(&get_vis_data, (j + 1), i);
+
+
+            px2 = wn + (fftw_real)(i + 1) * wn;
+            py2 = hn + (fftw_real)(j + 1) * hn;
+            val2 = get_data_interpol(&get_vis_data, j + 1, i + 1);
+
+
+            px3 = wn + (fftw_real)(i + 1) * wn;
+            py3 = hn + (fftw_real)j * hn;
+            val3 = get_data_interpol(&get_vis_data, j, i + 1);
+
+            set_colormap(val0);    glVertex2f(px0, py0);
+            set_colormap(val1);    glVertex2f(px1, py1);
+            set_colormap(val2);    glVertex2f(px2, py2);
+
+
+            set_colormap(val0);    glVertex2f(px0, py0);
+            set_colormap(val2);    glVertex2f(px2, py2);
+            set_colormap(val3);    glVertex2f(px3, py3);
+        }
+    }
+    glEnd();
+}
+
 //visualize: This is the main visualization function
 void visualize(void)
 {
-    int        i, j;
     fftw_real  wn = (fftw_real)winWidth / (fftw_real)(DIM_X + 1);   // Grid cell width
     fftw_real  hn = (fftw_real)winHeight / (fftw_real)(DIM_Y + 1);  // Grid cell heigh
 
-	if (draw_smoke)
-	{   
-        float val0, val1, val2, val3;
-		double px0, py0, px1, py1, px2, py2, px3, py3;
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glBegin(GL_TRIANGLES);
-        for (j = 0; j < DIM_Y - 1; j++)            //draw smoke
-		{
-            for (i = 0; i < DIM_X - 1; i++)
-			{
-				px0 = wn + (fftw_real)i * wn;
-				py0 = hn + (fftw_real)j * hn;
-                val0 = get_data_interpol(&get_vis_data, j, i);
+    if (enable_smoke)
+        draw_smoke(hn, wn);
 
+    if (draw_vecs) {
+        switch (glyph_shape) {
+            case CONES:
+                draw_cones(hn, wn);
+                break;
+            case ARROWS:
+                draw_arrows(hn, wn);
+                break;
+            case HEDGEHOGS:
+            default:
+                draw_hedgehogs(hn, wn);
+        }
+    }
 
-				px1 = wn + (fftw_real)i * wn;
-				py1 = hn + (fftw_real)(j + 1) * hn;
-                val1 = get_data_interpol(&get_vis_data, (j + 1), i);
-
-
-				px2 = wn + (fftw_real)(i + 1) * wn;
-				py2 = hn + (fftw_real)(j + 1) * hn;
-                val2 = get_data_interpol(&get_vis_data, j + 1, i + 1);
-
-
-				px3 = wn + (fftw_real)(i + 1) * wn;
-				py3 = hn + (fftw_real)j * hn;
-                val3 = get_data_interpol(&get_vis_data, j, i + 1);
-
-                set_colormap(val0);    glVertex2f(px0, py0);
-                set_colormap(val1);    glVertex2f(px1, py1);
-                set_colormap(val2);    glVertex2f(px2, py2);
-
-
-                set_colormap(val0);    glVertex2f(px0, py0);
-                set_colormap(val2);    glVertex2f(px2, py2);
-                set_colormap(val3);    glVertex2f(px3, py3);
-			}
-		}
-		glEnd();
-	}
-
-	if (draw_vecs)
-    {
-		glBegin(GL_LINES);              //draw velocities
-        for (i = 0; i < DIM_X; i++)
-            for (j = 0; j < DIM_Y; j++)
-			{
-                direction_to_color(j, i, color_dir);
-				glVertex2f(wn + (fftw_real)i * wn, hn + (fftw_real)j * hn);
-                glVertex2f((wn + (fftw_real)i * wn) + vec_scale * get_data_interpol(&get_vec_data_x, j, i),
-                           (hn + (fftw_real)j * hn) + vec_scale * get_data_interpol(&get_vec_data_y, j, i));
-			}
-		glEnd();
-	}
 }
 
 
@@ -500,7 +547,7 @@ void keyboard(unsigned char key, int x, int y)
 		case 's': vec_scale *= 0.8; break;
 		case 'V': visc *= 5; break;
 		case 'v': visc *= 0.2; break;
-		case 'x': draw_smoke = 1 - draw_smoke; 
+        case 'x': enable_smoke = 1 - enable_smoke;
 //			if (draw_smoke==0) draw_vecs = 1; break;
 		case 'y': draw_vecs = 1 - draw_vecs; 
 //			if (draw_vecs==0) draw_smoke = 1; break;
