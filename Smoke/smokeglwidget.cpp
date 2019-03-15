@@ -46,6 +46,11 @@ void SmokeGLWidget::step()
 {
     fluids::do_one_simulation_step();
     update();
+    if (fluids::autoscale_colormaps) {
+        update_max_box(fluids::max_col);
+        update_min_box(fluids::min_col);
+        trigger_colormap();
+    }
 }
 
 void SmokeGLWidget::mouseMoveEvent(QMouseEvent *e)
@@ -161,4 +166,21 @@ void SmokeGLWidget::set_interpol_type(bool toggle)
 void SmokeGLWidget::set_glyph_scale(int n)
 {
     fluids::vec_scale = (float)n;
+}
+
+void SmokeGLWidget::set_glyph_shape(bool toggle)
+{
+    if (toggle) {
+        QRadioButton *button = static_cast<QRadioButton *>(sender());
+        int digit = (button->objectName().end()-1)->digitValue();
+        if (digit >= 0)
+            fluids::glyph_shape = (glyph_type)digit;
+        else
+            qDebug() << "Invalid radio button sender for setting glyph shape";
+    }
+}
+
+void SmokeGLWidget::set_autoscale_colormap(int status)
+{
+    fluids::autoscale_colormaps = (bool)status;
 }

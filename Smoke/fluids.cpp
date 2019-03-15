@@ -25,6 +25,7 @@ fftw_real *fx, *fy;             //(fx,fy)   = user-controlled simulation forces,
 fftw_real *rho, *rho0;          //smoke density at the current (rho) and previous (rho0) moment 
 rfftwnd_plan plan_rc, plan_cr;  //simulation domain discretization
 
+fftw_real *divx;
 
 //--- VISUALIZATION PARAMETERS ---------------------------------------------------------------------
 int   winWidth, winHeight;      //size of the graphics window, in pixels
@@ -38,13 +39,14 @@ int   frozen = 0;               //toggles on/off the animation
 
 
 bool enable_bands = false;
+bool autoscale_colormaps = false;
 int bands = 2;
 float min_col = 0.0;
 float max_col = 1.0;
 vis_data_type color_data_type = DENSITY_RHO;
 vis_data_type vector_data_type = VELOCITY_V;
 interpol_type interpolation = NEAREST_NEIGHBOR;
-glyph_type glyph_shape = CONES;
+glyph_type glyph_shape = HEDGEHOGS;
 
 
 //------ SIMULATION CODE STARTS HERE -----------------------------------------------------------------
@@ -68,6 +70,8 @@ void init_simulation(int n)
 	rho0    = (fftw_real*) malloc(dim);
 	plan_rc = rfftw2d_create_plan(n, n, FFTW_REAL_TO_COMPLEX, FFTW_IN_PLACE);
 	plan_cr = rfftw2d_create_plan(n, n, FFTW_COMPLEX_TO_REAL, FFTW_IN_PLACE);
+
+    divx = (fftw_real*) malloc(dim);
 	
 	for (i = 0; i < n * n; i++)                      //Initialize data structures to 0
 	{ vx[i] = vy[i] = vx0[i] = vy0[i] = fx[i] = fy[i] = rho[i] = rho0[i] = 0.0f; }
@@ -144,10 +148,44 @@ void solve(int n, fftw_real* vx, fftw_real* vy, fftw_real* vx0, fftw_real* vy0, 
 	FFT(-1,vx0); 
 	FFT(-1,vy0);
 
+
     f = 1.0/(n*n);
     for (i=0;i<n;i++)
        for (j=0;j<n;j++)
        { vx[i+n*j] = f*vx0[i+(n+2)*j]; vy[i+n*j] = f*vy0[i+(n+2)*j]; }
+
+//    Testing density fixed point
+//    rho0[25+25*n] = 20.0;
+//    rho[25+25*n] = 20.0;
+
+    if (color_data_type == DIVERGENCE) {
+        // Corners
+        // i==0, j==0
+        divx[0] = vx[1] - vx[0] + vx[n] - vx[0];
+        // i==0, j==n-1
+        divx[n*(n-1)] = vx[1+n*(n-1)] - vx[0+n*(n-1)] + vx[n*(n-1)] - vx[i+n*(n-2)];
+        // i==n-1, j==0
+        divx[n-1] = vx[n-1] - vx[n-2] + vx[n-1 + 1] - vx[n-1];
+        // i==n-1, j==n-1
+        divx[(n-1)+n*(n-1)] = vx[(n-1)+n*(n-1)] - vx[(n-2)+n*(n-1)] + vx[(n-1)+n*(n-1)] - vx[(n-1)+n*(n-2)];
+
+        // Edges
+        for (i=1; i < n-1; i++) {
+            divx[i] = vx[(i+1)] - vx[(i-1)] + vx[i+n] - vx[i];
+            divx[i+(n-1)] = vx[(i+1)+n*(n-1)] - vx[(i-1)+n*(n-1)] + vx[i+n*(n-1)] - vx[i+n*(n-2)];
+        }
+        for (j=1; j < n-1; j++) {
+            divx[n*j] = vx[1+n*j] - vx[n*j] + vx[n*(j+1)] - vx[n*(j-1)];
+            divx[(n-1)+n*j] = vx[(n-1)+n*j] - vx[(n-2)+n*j] + vx[(n-1)+n*(j+1)] - vx[(n-1)+n*(j-1)];
+        }
+
+        // No boundary
+        for (i = 1; i < n-1; i++)
+            for (j = 1; j < n-1; j++) {
+                divx[i+n*j] = vx[(i+1)+n*j] - vx[(i-1)+n*j] + vx[i+n*(j+1)] - vx[i+n*(j-1)];
+            }
+     }
+
 } 
 
 
@@ -312,6 +350,8 @@ fftw_real get_vis_data(int idx)
             return sqrt(vx[idx]*vx[idx] + vy[idx]*vy[idx]);
         case FORCE_FIELD_F:
             return sqrt(fx[idx]*fx[idx] + fy[idx]*fy[idx]);
+        case DIVERGENCE:
+            return divx[idx];
         case DENSITY_RHO:
         default:
             return rho[idx];
@@ -398,7 +438,7 @@ void direction_to_color(int y, int x, int method)
 	glColor3f(r,g,b);
 }
 
-void draw_hedgehogs(fftw_real hn, fftw_real wn)
+void draw_hedgehogs(fftw_real hn, fftw_real wn, float hedge_scale = 1)
 {
     int i, j;
     glBegin(GL_LINES);              //draw velocities
@@ -407,14 +447,14 @@ void draw_hedgehogs(fftw_real hn, fftw_real wn)
         {
             direction_to_color(j, i, color_dir);
             glVertex2f(wn + (fftw_real)i * wn, hn + (fftw_real)j * hn);
-            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * get_data_interpol(&get_vec_data_x, j, i),
-                       (hn + (fftw_real)j * hn) + vec_scale * get_data_interpol(&get_vec_data_y, j, i));
+            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * hedge_scale * get_data_interpol(&get_vec_data_x, j, i),
+                       (hn + (fftw_real)j * hn) + vec_scale * hedge_scale * get_data_interpol(&get_vec_data_y, j, i));
         }
     glEnd();
 }
 
 
-void draw_cones(fftw_real hn, fftw_real wn)
+void draw_cones(fftw_real hn, fftw_real wn, float offset = 0)
 {
     int i, j;
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -425,19 +465,20 @@ void draw_cones(fftw_real hn, fftw_real wn)
             direction_to_color(j, i, color_dir);
             fftw_real x = get_data_interpol(&get_vec_data_x, j, i);
             fftw_real y = get_data_interpol(&get_vec_data_y, j, i);
-            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * x*0.2,
-                       (hn + (fftw_real)j * hn) + vec_scale * y*0.2);
-            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * y*0.05,
-                       (hn + (fftw_real)j * hn) + vec_scale * -x*0.05);
-            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * -y*0.05,
-                       (hn + (fftw_real)j * hn) + vec_scale * x*0.05);
+            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * (x*0.2 + offset * x),
+                       (hn + (fftw_real)j * hn) + vec_scale * (y*0.2 + offset * y));
+            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * (y*0.05 + offset * x),
+                       (hn + (fftw_real)j * hn) + vec_scale * (-x*0.05 + offset * y));
+            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * (-y*0.05 + offset * x),
+                       (hn + (fftw_real)j * hn) + vec_scale * (x*0.05 + offset * y));
         }
     glEnd();
 }
 
 void draw_arrows(fftw_real hn, fftw_real wn)
 {
-
+    draw_hedgehogs(hn, wn, 0.8f);
+    draw_cones(hn, wn, 0.8f);
 }
 
 void draw_smoke(fftw_real hn, fftw_real wn)
@@ -483,11 +524,27 @@ void draw_smoke(fftw_real hn, fftw_real wn)
     glEnd();
 }
 
+void scale_colormap()
+{
+    fftw_real n, current_min = INFINITY, current_max = -INFINITY;
+    for (int i = 0; i < DIM*DIM; i++) {
+        n = get_vis_data(i);
+        if (n < current_min) current_min = n;
+        else if (n > current_max) current_max = n;
+    }
+    min_col = current_min;
+    max_col = current_max;
+
+}
+
 //visualize: This is the main visualization function
 void visualize(void)
 {
     fftw_real  wn = (fftw_real)winWidth / (fftw_real)(DIM_X + 1);   // Grid cell width
     fftw_real  hn = (fftw_real)winHeight / (fftw_real)(DIM_Y + 1);  // Grid cell heigh
+
+    if (autoscale_colormaps)
+        scale_colormap();
 
     if (enable_smoke)
         draw_smoke(hn, wn);

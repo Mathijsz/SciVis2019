@@ -17,6 +17,7 @@ typedef enum vis_data_type {
     DENSITY_RHO,
     VELOCITY_V,
     FORCE_FIELD_F,
+    DIVERGENCE,
     NUMDATATYPES
 } vis_data_type;
 
@@ -49,6 +50,8 @@ namespace fluids {
     extern interpol_type interpolation;
     extern glyph_type glyph_shape;
     extern float vec_scale;
+    extern bool autoscale_colormaps;
+    extern float col_min, col_max;
 
     extern int DIM_X;
     extern int DIM_Y;

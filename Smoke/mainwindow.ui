@@ -55,6 +55,9 @@
           <property name="prefix">
            <string>max: </string>
           </property>
+          <property name="decimals">
+           <number>3</number>
+          </property>
           <property name="maximum">
            <double>1.000000000000000</double>
           </property>
@@ -81,6 +84,9 @@
           <property name="prefix">
            <string>min: </string>
           </property>
+          <property name="decimals">
+           <number>3</number>
+          </property>
           <property name="maximum">
            <double>1.000000000000000</double>
           </property>
@@ -98,7 +104,7 @@
       <item>
        <widget class="QCheckBox" name="hedgeHogsCheckBox">
         <property name="text">
-         <string>Hedgehogs</string>
+         <string>Glyphs</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -117,7 +123,7 @@
          <string>Enable direction coloring</string>
         </property>
         <property name="text">
-         <string>Hedgehog colored</string>
+         <string>Directional glyph color</string>
         </property>
        </widget>
       </item>
@@ -125,6 +131,13 @@
        <widget class="QCheckBox" name="smokeCheckBox">
         <property name="text">
          <string>Smoke</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="autoscaleCheckBox">
+        <property name="text">
+         <string>Autoscale</string>
         </property>
        </widget>
       </item>
@@ -145,7 +158,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="colorTab">
        <attribute name="title">
@@ -232,6 +245,25 @@
               </property>
               <property name="text">
                <string>Force field</string>
+              </property>
+             </widget>
+             <widget class="QRadioButton" name="colorData_3">
+              <property name="geometry">
+               <rect>
+                <x>120</x>
+                <y>20</y>
+                <width>120</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Divergence</string>
               </property>
              </widget>
             </widget>
@@ -564,8 +596,8 @@
          <rect>
           <x>140</x>
           <y>0</y>
-          <width>191</width>
-          <height>80</height>
+          <width>181</width>
+          <height>101</height>
          </rect>
         </property>
         <property name="title">
@@ -575,7 +607,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>20</y>
+           <y>23</y>
            <width>160</width>
            <height>16</height>
           </rect>
@@ -596,6 +628,48 @@
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
+        <widget class="QRadioButton" name="glyphShape_0">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>41</y>
+           <width>93</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Hedgehogs</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="glyphShape_1">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>61</y>
+           <width>93</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Cones</string>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="glyphShape_2">
+         <property name="geometry">
+          <rect>
+           <x>110</x>
+           <y>41</y>
+           <width>71</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Arows</string>
+         </property>
+        </widget>
        </widget>
       </widget>
      </widget>
@@ -611,6 +685,8 @@
    <header>smokeglwidget.h</header>
    <slots>
     <signal>trigger_colormap()</signal>
+    <signal>update_min_box(double)</signal>
+    <signal>update_max_box(double)</signal>
     <slot>set_color(int)</slot>
     <slot>change_color(bool)</slot>
     <slot>set_hedgehogs(int)</slot>
@@ -624,6 +700,8 @@
     <slot>set_dim_y(int)</slot>
     <slot>set_interpol_type(bool)</slot>
     <slot>set_glyph_scale(int)</slot>
+    <slot>set_glyph_shape(bool)</slot>
+    <slot>set_autoscale_colormap(int)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -1016,6 +1094,118 @@
     <hint type="destinationlabel">
      <x>272</x>
      <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>glyphShape_0</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_glyph_shape(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>198</x>
+     <y>384</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>glyphShape_1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_glyph_shape(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>198</x>
+     <y>404</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>glyphShape_2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_glyph_shape(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>287</x>
+     <y>384</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorData_3</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_color_data(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>183</x>
+     <y>375</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>autoscaleCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_autoscale_colormap(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>559</x>
+     <y>295</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>smokewidget</sender>
+   <signal>update_max_box(double)</signal>
+   <receiver>maxSB</receiver>
+   <slot>setValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>593</x>
+     <y>14</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>smokewidget</sender>
+   <signal>update_min_box(double)</signal>
+   <receiver>minSB</receiver>
+   <slot>setValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>593</x>
+     <y>261</y>
     </hint>
    </hints>
   </connection>

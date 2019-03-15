@@ -26,18 +26,24 @@ void ColorLegendWidget::paintEvent(QPaintEvent *event)
 
 QImage ColorLegendWidget::constructLegend(color_func f, int banding_levels)
 {
+    using namespace fluids;
+
     float r, g, b;
-    QImage image(1, 256, QImage::Format_RGB32);
-    for (int i = 0; i < 256; i++) {
+    int range = 256;
+    QImage image(1, range, QImage::Format_RGB32);
+    for (int i = 0; i < range; i++) {
         // Also display max value in the color legend
-        int div = 256;
-        if (fluids::enable_bands) {
+        int div = range;
+        if (enable_bands) {
             div -= 255 / banding_levels;
-            fluids::with_banding(f, (float)i / div, &r, &g, &b, banding_levels);
+            float scaled_col = (max_col - min_col) * ((float)i/div) + min_col;
+            fluids::with_banding(f, scaled_col, &r, &g, &b, banding_levels);
+            qDebug() << scaled_col;
         } else {
-            f((float)i / div, &r, &g, &b);
+            float scaled_col = (max_col - min_col) * ((float)i/div) + min_col;
+            f(scaled_col, &r, &g, &b);
         }
-        image.setPixel(0, 255 - i, qRgb(255*r, 255*g, 255*b));
+        image.setPixel(0, range - 1 - i, qRgb(255*r, 255*g, 255*b));
     }
     return image;
 }

@@ -32,9 +32,13 @@ public slots:
     void set_interpol_type(bool toggle);
 
     void set_glyph_scale(int n);
+    void set_glyph_shape(bool toggle);
+    void set_autoscale_colormap(int status);
 
 signals:
     void trigger_colormap();
+    void update_min_box(double min);
+    void update_max_box(double max);
 
 protected:
     void initializeGL() override;
