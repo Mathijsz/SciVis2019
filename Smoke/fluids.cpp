@@ -5,7 +5,6 @@
 #include <rfftw.h>              //the numerical simulation FFTW library
 #include <stdio.h>              //for printing the help text
 #include <math.h>
-#include <tuple>
 
 #include <QOpenGLFunctions>
 #include <QDebug>
@@ -75,6 +74,21 @@ void init_simulation(int n)
 	
 	for (i = 0; i < n * n; i++)                      //Initialize data structures to 0
 	{ vx[i] = vy[i] = vx0[i] = vy0[i] = fx[i] = fy[i] = rho[i] = rho0[i] = 0.0f; }
+}
+
+void destroy_simulation()
+{
+    free(vx);
+    free(vy);
+    free(vx0);
+    free(vy0);
+    free(fx);
+    free(fy);
+    free(rho);
+    free(rho0);
+    free(divx);
+    rfftwnd_destroy_plan(plan_rc);
+    rfftwnd_destroy_plan(plan_cr);
 }
 
 

@@ -21,6 +21,7 @@ SmokeGLWidget::SmokeGLWidget(QWidget *parent)
 SmokeGLWidget::~SmokeGLWidget()
 {
     delete timer;
+    fluids::destroy_simulation();
 }
 
 void SmokeGLWidget::initializeGL()

@@ -57,6 +57,7 @@ namespace fluids {
     extern int DIM_Y;
 
     void init_simulation(int n);
+    void destroy_simulation();
     void display(void);
     void reshape(int w, int h);
     void do_one_simulation_step(void);
