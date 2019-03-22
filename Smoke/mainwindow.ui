@@ -87,6 +87,9 @@
           <property name="decimals">
            <number>3</number>
           </property>
+          <property name="minimum">
+           <double>-1.000000000000000</double>
+          </property>
           <property name="maximum">
            <double>1.000000000000000</double>
           </property>
@@ -1206,6 +1209,22 @@
     <hint type="destinationlabel">
      <x>593</x>
      <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorData_2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_color_data(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>63</x>
+     <y>415</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>138</y>
     </hint>
    </hints>
   </connection>

@@ -123,9 +123,9 @@ void SmokeGLWidget::set_color_data(bool toggle)
     if (toggle) {
         QRadioButton *button = static_cast<QRadioButton *>(sender());
         int digit = (button->objectName().end()-1)->digitValue();
-        if (digit >= 0)
+        if (digit >= 0) {
             fluids::color_data_type = (vis_data_type)digit;
-        else
+        } else
             qDebug() << "Invalid radio button sender for setting data type";
     }
 }
