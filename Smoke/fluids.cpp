@@ -534,7 +534,7 @@ void draw_isolines(fftw_real hn, fftw_real wn)
             }
 
             for (int l = 0; l < vertex_x.size(); l++) {
-                glVertex2f(wn + (fftw_real)vertex_x[l]*wn, hn + (fftw_real)vertex_y[l]*hn);
+                glVertex2f(wn + (fftw_real)vertex_y[l]*wn, hn + (fftw_real)vertex_x[l]*hn);
             }
         }
     glEnd();
