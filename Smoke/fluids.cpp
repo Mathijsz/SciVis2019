@@ -470,7 +470,6 @@ void draw_isolines(fftw_real hn, fftw_real wn)
             points[2] = get_data_interpol(&get_vis_data, j+1,   i+1);
             points[3] = get_data_interpol(&get_vis_data, j,     i+1);
             for (k = 0; k < 4; k++) {
-                // within_bounds(points[k], points[(k+1) % 4])
                 if (points[k] > isoline)
                     code += pow(2, k);
             }

@@ -38,7 +38,6 @@ QImage ColorLegendWidget::constructLegend(color_func f, int banding_levels)
             div -= 255 / banding_levels;
             float scaled_col = (max_col - min_col) * ((float)i/div) + min_col;
             fluids::with_banding(f, scaled_col, &r, &g, &b, banding_levels);
-            qDebug() << scaled_col;
         } else {
             float scaled_col = (max_col - min_col) * ((float)i/div) + min_col;
             f(scaled_col, &r, &g, &b);
