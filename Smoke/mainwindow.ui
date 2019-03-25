@@ -131,6 +131,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="isolineCheckBox">
+        <property name="text">
+         <string>Isolines</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QCheckBox" name="smokeCheckBox">
         <property name="text">
          <string>Smoke</string>
@@ -161,7 +168,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="colorTab">
        <attribute name="title">
@@ -674,6 +681,44 @@
          </property>
         </widget>
        </widget>
+       <widget class="QGroupBox" name="IsolinesSettings">
+        <property name="geometry">
+         <rect>
+          <x>330</x>
+          <y>0</y>
+          <width>141</width>
+          <height>101</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Isolines</string>
+        </property>
+        <widget class="QDoubleSpinBox" name="isolineSpinBox">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>30</y>
+           <width>111</width>
+           <height>26</height>
+          </rect>
+         </property>
+         <property name="prefix">
+          <string>threshold: </string>
+         </property>
+         <property name="decimals">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <double>1.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
+         <property name="value">
+          <double>0.500000000000000</double>
+         </property>
+        </widget>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -705,6 +750,8 @@
     <slot>set_glyph_scale(int)</slot>
     <slot>set_glyph_shape(bool)</slot>
     <slot>set_autoscale_colormap(int)</slot>
+    <slot>set_isolines(double)</slot>
+    <slot>enable_isolines(int)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -1221,6 +1268,38 @@
     <hint type="sourcelabel">
      <x>63</x>
      <y>415</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>isolineSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_isolines(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>372</x>
+     <y>385</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>isolineCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>enable_isolines(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>336</x>
+     <y>295</y>
     </hint>
     <hint type="destinationlabel">
      <x>268</x>

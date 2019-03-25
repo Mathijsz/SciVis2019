@@ -52,6 +52,8 @@ namespace fluids {
     extern float vec_scale;
     extern bool autoscale_colormaps;
     extern float col_min, col_max;
+    extern bool enable_isolines;
+    extern float isoline;
 
     extern int DIM_X;
     extern int DIM_Y;

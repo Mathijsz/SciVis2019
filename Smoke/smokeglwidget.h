@@ -34,6 +34,8 @@ public slots:
     void set_glyph_scale(int n);
     void set_glyph_shape(bool toggle);
     void set_autoscale_colormap(int status);
+    void enable_isolines(int status);
+    void set_isolines(double value);
 
 signals:
     void trigger_colormap();

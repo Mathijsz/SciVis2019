@@ -15,7 +15,7 @@ SmokeGLWidget::SmokeGLWidget(QWidget *parent)
 {
     fluids::init_simulation(50);
     connect(timer, SIGNAL(timeout()), this, SLOT(step()));
-    timer->start(250);
+    timer->start(17);
 }
 
 SmokeGLWidget::~SmokeGLWidget()
@@ -184,4 +184,14 @@ void SmokeGLWidget::set_glyph_shape(bool toggle)
 void SmokeGLWidget::set_autoscale_colormap(int status)
 {
     fluids::autoscale_colormaps = (bool)status;
+}
+
+void SmokeGLWidget::enable_isolines(int status)
+{
+    fluids::enable_isolines = (bool)status;
+}
+
+void SmokeGLWidget::set_isolines(double value)
+{
+    fluids::isoline = (float)value;
 }

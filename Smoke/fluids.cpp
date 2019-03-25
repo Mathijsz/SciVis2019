@@ -40,7 +40,7 @@ int   frozen = 0;               //toggles on/off the animation
 
 bool enable_bands = false;
 bool autoscale_colormaps = false;
-bool enable_isolines = true;
+bool enable_isolines = false;
 float isoline = 0.5;
 int bands = 2;
 float min_col = 0.0;
@@ -479,7 +479,7 @@ void draw_isolines(fftw_real hn, fftw_real wn)
                 vertex_x.push_back(j + value_to_coord(points[0], points[1], isoline));
                 vertex_y.push_back(i);
                 vertex_x.push_back(j+1);
-                vertex_y.push_back(i + value_to_coord(points[0], points[1], isoline));
+                vertex_y.push_back(i + value_to_coord(points[1], points[2], isoline));
                 break;
             case 3:
             case 12:
@@ -492,7 +492,7 @@ void draw_isolines(fftw_real hn, fftw_real wn)
             case 11:
                 vertex_x.push_back(j + 1);
                 vertex_y.push_back(i + value_to_coord(points[1], points[2], isoline));
-                vertex_x.push_back(j + value_to_coord(points[2], points[3], isoline));
+                vertex_x.push_back(j + value_to_coord(points[3], points[2], isoline));
                 vertex_y.push_back(i + 1);
                 break;
             case 5:
@@ -529,7 +529,7 @@ void draw_isolines(fftw_real hn, fftw_real wn)
             points[0] = points[1];
             points[3] = points[2];
         }
-    }
+        }
     glEnd();
 }
 
