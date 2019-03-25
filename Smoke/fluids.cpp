@@ -450,25 +450,26 @@ void direction_to_color(int y, int x, int method)
 // Given 2 values of points and 1 value in between, return the relative coord of the value
 float value_to_coord(float a, float b, float c)
 {
-    if (a > b)
-        std::swap(a, b);
-    return (c - a) / (b - a);
+    if (b-a == 0) return 0;
+    return fabs(c - a) / fabs(b - a);
 }
 
 void draw_isolines(fftw_real hn, fftw_real wn)
 {
     int i, j, k;
     glBegin(GL_LINES);
-    for (i = 0; i < DIM_X - 1; i++)
+    fftw_real points[4];
+    for (i = 0; i < DIM_X - 1; i++) {
+
+        points[0] = get_data_interpol(&get_vis_data, 0,     i);
+        points[3] = get_data_interpol(&get_vis_data, 0,     i+1);
+
         for (j = 0; j < DIM_Y - 1; j++)
         {
             glColor3f(1,1,1);
-            fftw_real points[4];
             unsigned char code = 0;
-            points[0] = get_data_interpol(&get_vis_data, j,     i);
             points[1] = get_data_interpol(&get_vis_data, j+1,   i);
             points[2] = get_data_interpol(&get_vis_data, j+1,   i+1);
-            points[3] = get_data_interpol(&get_vis_data, j,     i+1);
             for (k = 0; k < 4; k++) {
                 if (points[k] > isoline)
                     code += pow(2, k);
@@ -536,7 +537,10 @@ void draw_isolines(fftw_real hn, fftw_real wn)
             for (int l = 0; l < vertex_x.size(); l++) {
                 glVertex2f(wn + (fftw_real)vertex_y[l]*wn, hn + (fftw_real)vertex_x[l]*hn);
             }
+            points[0] = points[1];
+            points[3] = points[2];
         }
+    }
     glEnd();
 }
 

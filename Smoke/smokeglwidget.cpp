@@ -15,7 +15,7 @@ SmokeGLWidget::SmokeGLWidget(QWidget *parent)
 {
     fluids::init_simulation(50);
     connect(timer, SIGNAL(timeout()), this, SLOT(step()));
-    timer->start(17);
+    timer->start(250);
 }
 
 SmokeGLWidget::~SmokeGLWidget()
