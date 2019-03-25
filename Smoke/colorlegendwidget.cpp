@@ -34,14 +34,10 @@ QImage ColorLegendWidget::constructLegend(color_func f, int banding_levels)
     for (int i = 0; i < range; i++) {
         // Also display max value in the color legend
         int div = range;
-        if (enable_bands) {
+        if (enable_bands)
             div -= 255 / banding_levels;
-            float scaled_col = (max_col - min_col) * ((float)i/div) + min_col;
-            fluids::with_banding(f, scaled_col, &r, &g, &b, banding_levels);
-        } else {
-            float scaled_col = (max_col - min_col) * ((float)i/div) + min_col;
-            f(scaled_col, &r, &g, &b);
-        }
+        float scaled_col = (max_col - min_col) * ((float)i/div) + min_col;
+        fluids::with_banding(f, scaled_col, &r, &g, &b, banding_levels);
         image.setPixel(0, range - 1 - i, qRgb(255*r, 255*g, 255*b));
     }
     return image;
