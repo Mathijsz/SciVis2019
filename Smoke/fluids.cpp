@@ -275,27 +275,26 @@ float rescale(float value)
 void rainbow(float value,float* R,float* G,float* B)
 {
     const float dx=0.8;
-    value = rescale(value);
     value = (6-2*dx)*value+dx;
     *R = max(0.0,(3-fabs(value-4)-fabs(value-5))/2);
     *G = max(0.0,(4-fabs(value-2)-fabs(value-4))/2);
     *B = max(0.0,(3-fabs(value-1)-fabs(value-2))/2);
 }
 
-void with_banding(color_func f, float value, float *R, float *G, float *B, int levels)
+void with_banding(color_func f, float value, float *R, float *G, float *B, int banding_levels)
 {
-    if (levels > 0) {
-        levels--;
-        value *= levels;
+    value = rescale(value);
+    if (enable_bands && banding_levels > 0) {
+        banding_levels--;
+        value *= banding_levels;
         value = (int)value;
-        value /= levels;
+        value /= banding_levels;
     }
     (*f)(value, R, G, B);
 }
 
 void red_to_white(float value, float *R, float *G, float *B)
 {
-    value = rescale(value);
     *R = 1;
     *G = value;
     *B = value;
@@ -303,7 +302,6 @@ void red_to_white(float value, float *R, float *G, float *B)
 
 void blue_to_red_via_white(float value, float *R, float *G, float *B)
 {
-    value = rescale(value);
     *R = min(1.0, 2*value);
     *G = 1-fabs(value*2-1);
     *B = min(1.0, 2 - 2*value);
@@ -311,7 +309,6 @@ void blue_to_red_via_white(float value, float *R, float *G, float *B)
 
 void blue_to_yellow(float value, float *R, float *G, float *B)
 {
-    value = rescale(value);
     *R = max(value-(2/3), 0.0);
     *G = min(value*3, 1.0);
     *B = min(1.0, max(0.0, 2-value*3));
@@ -319,7 +316,6 @@ void blue_to_yellow(float value, float *R, float *G, float *B)
 
 void white_to_black(float value, float *R, float *G, float *B)
 {
-    value = rescale(value);
     *R = *G = *B = value;
 }
 
@@ -345,10 +341,7 @@ void set_colormap(float vy)
 {
     float R,G,B;
     color_func f = get_color_func((colormap)scalar_col);
-    if (enable_bands)
-        with_banding(f, vy, &R, &G, &B, bands);
-    else
-        f(vy, &R, &G, &B);
+    with_banding(f, vy, &R, &G, &B, bands);
     glColor3f(R,G,B);
 }
 
@@ -438,11 +431,7 @@ void direction_to_color(int y, int x, int method)
     else
     {
         color_func func = get_color_func((colormap)scalar_col);
-        if (enable_bands) {
-            with_banding(func, get_data_interpol(&get_vis_data, y, x), &r, &g, &b, bands);
-        } else {
-            func(get_data_interpol(&get_vis_data, y, x), &r, &g, &b);
-        }
+        with_banding(func, get_data_interpol(&get_vis_data, y, x), &r, &g, &b, bands);
     }
     glColor3f(r,g,b);
 }
