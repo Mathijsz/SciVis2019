@@ -228,3 +228,21 @@ void SmokeGLWidget::enable_bounded_isolines(int status)
 {
     fluids::enable_bounded_isolines = (bool)status;
 }
+
+void SmokeGLWidget::enable_heightmap(int status)
+{
+    fluids::enable_heightmap = (bool)status;
+}
+
+void SmokeGLWidget::set_height_data(bool toggle)
+{
+    if (toggle) {
+        QRadioButton *button = static_cast<QRadioButton *>(sender());
+        int digit = (button->objectName().end()-1)->digitValue();
+        if (digit >= 0)
+            fluids::heightmap_data_type = (vis_data_type)digit;
+        else
+            qDebug() << "Invalid radio button sender for setting color map";
+        trigger_colormap();
+    }
+}

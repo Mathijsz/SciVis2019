@@ -48,6 +48,7 @@ namespace fluids {
     extern float max_col;
     extern vis_data_type color_data_type;
     extern vis_data_type vector_data_type;
+    extern vis_data_type heightmap_data_type;
     extern interpol_type interpolation;
     extern glyph_type glyph_shape;
     extern float vec_scale;
@@ -60,6 +61,8 @@ namespace fluids {
     extern float upper_isoline;
     extern float lower_isoline;
     extern int isoline_count;
+
+    extern bool enable_heightmap;
 
     extern int DIM_X;
     extern int DIM_Y;

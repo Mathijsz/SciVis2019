@@ -4,8 +4,6 @@
 #include <QWidget>
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
-
-
 class SmokeGLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
 Q_OBJECT
@@ -43,6 +41,9 @@ public slots:
     void set_lower_isoline(double value);
     void set_isoline_count(int value);
     void enable_bounded_isolines(int status);
+
+    void enable_heightmap(int status);
+    void set_height_data(bool toggle);
 
 signals:
     void trigger_colormap();

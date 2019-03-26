@@ -138,6 +138,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="heightmapCheckBox">
+        <property name="text">
+         <string>Heightmap</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QCheckBox" name="autoscaleCheckBox">
         <property name="text">
          <string>Autoscale</string>
@@ -275,11 +282,6 @@
                <string>Divergence</string>
               </property>
              </widget>
-             <zorder>colorData_0</zorder>
-             <zorder>colorData_1</zorder>
-             <zorder>colorData_2</zorder>
-             <zorder>colorData_3</zorder>
-             <zorder>verticalLayoutWidget</zorder>
             </widget>
            </item>
            <item>
@@ -363,7 +365,7 @@
              <property name="title">
               <string>Height data</string>
              </property>
-             <widget class="QRadioButton" name="colorData_4">
+             <widget class="QRadioButton" name="heightData_0">
               <property name="geometry">
                <rect>
                 <x>0</x>
@@ -385,7 +387,7 @@
                <bool>true</bool>
               </property>
              </widget>
-             <widget class="QRadioButton" name="colorData_5">
+             <widget class="QRadioButton" name="heightData_1">
               <property name="geometry">
                <rect>
                 <x>120</x>
@@ -404,7 +406,7 @@
                <string>Fluid Velocity</string>
               </property>
              </widget>
-             <widget class="QRadioButton" name="colorData_6">
+             <widget class="QRadioButton" name="heightData_2">
               <property name="geometry">
                <rect>
                 <x>120</x>
@@ -423,7 +425,7 @@
                <string>Force field</string>
               </property>
              </widget>
-             <widget class="QRadioButton" name="colorData_7">
+             <widget class="QRadioButton" name="heightData_3">
               <property name="geometry">
                <rect>
                 <x>0</x>
@@ -987,6 +989,8 @@
     <slot>set_lower_isoline(double)</slot>
     <slot>set_isoline_count(int)</slot>
     <slot>enable_bounded_isolines(int)</slot>
+    <slot>set_height_data(bool)</slot>
+    <slot>enable_heightmap(int)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -1647,6 +1651,86 @@
     <hint type="sourcelabel">
      <x>567</x>
      <y>465</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heightData_0</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_height_data(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>384</x>
+     <y>375</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heightData_1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_height_data(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>504</x>
+     <y>375</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heightData_2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_height_data(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>504</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heightData_3</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_height_data(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>384</x>
+     <y>395</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heightmapCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>enable_heightmap(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>457</x>
+     <y>295</y>
     </hint>
     <hint type="destinationlabel">
      <x>268</x>

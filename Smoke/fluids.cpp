@@ -8,6 +8,7 @@
 
 #include <QOpenGLFunctions>
 #include <QDebug>
+#include <QMatrix4x4>
 #include "fluids.h"
 
 namespace fluids {
@@ -43,11 +44,14 @@ bool autoscale_colormaps = false;
 bool enable_isolines = false;
 bool enable_repeats = false;
 bool enable_bounded_isolines = false;
+bool enable_heightmap = false;
 
 float isoline = 0.5;
 float upper_isoline = 0.75;
 float lower_isoline = 0.25;
 int isoline_count = 2;
+
+int height_scale = 10;
 
 int bands = 2;
 int repeat_levels = 1;
@@ -55,9 +59,12 @@ float min_col = 0.0;
 float max_col = 1.0;
 vis_data_type color_data_type = DENSITY_RHO;
 vis_data_type vector_data_type = VELOCITY_V;
+vis_data_type heightmap_data_type = DENSITY_RHO;
 interpol_type interpolation = NEAREST_NEIGHBOR;
 glyph_type glyph_shape = HEDGEHOGS;
 
+
+QMatrix4x4 model, view, projection;
 
 //------ SIMULATION CODE STARTS HERE -----------------------------------------------------------------
 
@@ -364,6 +371,21 @@ fftw_real get_vis_data(int idx)
     }
 }
 
+fftw_real get_height_data(int idx)
+{
+    switch (heightmap_data_type) {
+        case VELOCITY_V:
+            return sqrt(vx[idx]*vx[idx] + vy[idx]*vy[idx]);
+        case FORCE_FIELD_F:
+            return sqrt(fx[idx]*fx[idx] + fy[idx]*fy[idx]);
+        case DIVERGENCE:
+            return divd[idx];
+        case DENSITY_RHO:
+        default:
+            return rho[idx];
+    }
+}
+
 fftw_real get_vec_data_x(int idx)
 {
     switch (vector_data_type) {
@@ -612,14 +634,26 @@ void draw_smoke(fftw_real hn, fftw_real wn)
             py3 = hn + (fftw_real)j * hn;
             val3 = get_data_interpol(&get_vis_data, j, i + 1);
 
-            set_colormap(val0);    glVertex2f(px0, py0);
-            set_colormap(val1);    glVertex2f(px1, py1);
-            set_colormap(val2);    glVertex2f(px2, py2);
+            float h0, h1, h2, h3;
+            h0 = h1 = h2 = h3 = 0;
+
+            if (enable_heightmap) {
+                h0 = height_scale * get_data_interpol(&get_height_data, j, i);
+                h1 = height_scale * get_data_interpol(&get_height_data, j+1, i);
+                h2 = height_scale * get_data_interpol(&get_height_data, j+1, i+1);
+                h3 = height_scale * get_data_interpol(&get_height_data, j, i+1);
+
+            }
+
+            set_colormap(val0);    glVertex3f(px0, py0, h0);
+            set_colormap(val1);    glVertex3f(px1, py1, h1);
+            set_colormap(val2);    glVertex3f(px2, py2, h2);
 
 
-            set_colormap(val0);    glVertex2f(px0, py0);
-            set_colormap(val2);    glVertex2f(px2, py2);
-            set_colormap(val3);    glVertex2f(px3, py3);
+            set_colormap(val0);    glVertex3f(px0, py0, h0);
+            set_colormap(val2);    glVertex3f(px2, py2, h2);
+            set_colormap(val3);    glVertex3f(px3, py3, h3);
+
         }
     }
     glEnd();
@@ -680,8 +714,11 @@ void visualize(void)
 void display(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    glMultMatrixf((view * model).data());
+
     visualize();
     glFlush();
 #ifdef USE_GLUT
@@ -692,11 +729,24 @@ void display(void)
 //reshape: Handle window resizing (reshaping) events
 void reshape(int w, int h)
 {
-    glViewport(0.0f, 0.0f, (GLfloat)w, (GLfloat)h);
+    model.setToIdentity();
+    view.setToIdentity();
+    projection.setToIdentity();
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    view.lookAt({(float)w/2, -150, 150}, {(float)w/2, (float)h/4, 0}, {0,0,1});
+
+    glMultMatrixf((view * model).data());
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-//	gluOrtho2D(0.0, (GLdouble)w, 0.0, (GLdouble)h);
-    glOrtho(0.0, (GLdouble)w, 0.0, (GLdouble)h, -1, 1);
+    projection.perspective(45, (float)16/9, -10, 10);
+    glMultMatrixf(projection.data());
+//    glOrtho(0.0, (GLdouble)w, 0.0, (GLdouble)h, -10, 50);
+    glFrustum(0.0, (GLdouble)w, 0.0, (GLdouble)h, -1, 1);
+
+    glViewport(0.0f, 0.0f, (GLfloat)w, (GLfloat)h);
     winWidth = w; winHeight = h;
 }
 
