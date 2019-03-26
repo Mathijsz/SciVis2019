@@ -208,3 +208,23 @@ void SmokeGLWidget::set_isolines(double value)
 {
     fluids::isoline = (float)value;
 }
+
+void SmokeGLWidget::set_upper_isoline(double value)
+{
+    fluids::upper_isoline = (float)value;
+}
+
+void SmokeGLWidget::set_lower_isoline(double value)
+{
+    fluids::lower_isoline = (float)value;
+}
+
+void SmokeGLWidget::set_isoline_count(int value)
+{
+    fluids::isoline_count = value;
+}
+
+void SmokeGLWidget::enable_bounded_isolines(int status)
+{
+    fluids::enable_bounded_isolines = (bool)status;
+}

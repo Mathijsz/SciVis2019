@@ -56,6 +56,11 @@ namespace fluids {
     extern bool enable_isolines;
     extern float isoline;
 
+    extern bool enable_bounded_isolines;
+    extern float upper_isoline;
+    extern float lower_isoline;
+    extern int isoline_count;
+
     extern int DIM_X;
     extern int DIM_Y;
 

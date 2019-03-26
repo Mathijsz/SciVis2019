@@ -161,7 +161,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="colorTab">
        <attribute name="title">
@@ -695,8 +695,8 @@
          <rect>
           <x>330</x>
           <y>0</y>
-          <width>141</width>
-          <height>101</height>
+          <width>291</width>
+          <height>161</height>
          </rect>
         </property>
         <property name="title">
@@ -715,7 +715,7 @@
           <string>threshold: </string>
          </property>
          <property name="decimals">
-          <number>1</number>
+          <number>2</number>
          </property>
          <property name="maximum">
           <double>1.000000000000000</double>
@@ -731,13 +731,95 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>20</y>
+           <y>30</y>
            <width>121</width>
            <height>17</height>
           </rect>
          </property>
          <property name="text">
-          <string>Enable Isolines</string>
+          <string>Isolines</string>
+         </property>
+        </widget>
+        <widget class="QDoubleSpinBox" name="upperThresholdBox">
+         <property name="geometry">
+          <rect>
+           <x>160</x>
+           <y>50</y>
+           <width>111</width>
+           <height>26</height>
+          </rect>
+         </property>
+         <property name="prefix">
+          <string>upper: </string>
+         </property>
+         <property name="decimals">
+          <number>2</number>
+         </property>
+         <property name="maximum">
+          <double>1.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
+         <property name="value">
+          <double>0.750000000000000</double>
+         </property>
+        </widget>
+        <widget class="QDoubleSpinBox" name="lowerThresholdBox">
+         <property name="geometry">
+          <rect>
+           <x>160</x>
+           <y>80</y>
+           <width>111</width>
+           <height>26</height>
+          </rect>
+         </property>
+         <property name="prefix">
+          <string>lower: </string>
+         </property>
+         <property name="decimals">
+          <number>2</number>
+         </property>
+         <property name="maximum">
+          <double>1.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
+         <property name="value">
+          <double>0.250000000000000</double>
+         </property>
+        </widget>
+        <widget class="QSpinBox" name="isolineCountBox">
+         <property name="geometry">
+          <rect>
+           <x>200</x>
+           <y>110</y>
+           <width>71</width>
+           <height>26</height>
+          </rect>
+         </property>
+         <property name="suffix">
+          <string> lines</string>
+         </property>
+         <property name="minimum">
+          <number>2</number>
+         </property>
+         <property name="maximum">
+          <number>10</number>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="boundedIsolineBox">
+         <property name="geometry">
+          <rect>
+           <x>160</x>
+           <y>30</y>
+           <width>121</width>
+           <height>17</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Bounded isolines</string>
          </property>
         </widget>
        </widget>
@@ -776,6 +858,10 @@
     <slot>enable_isolines(int)</slot>
     <slot>set_repeat_levels(int)</slot>
     <slot>enable_repeats(int)</slot>
+    <slot>set_upper_isoline(double)</slot>
+    <slot>set_lower_isoline(double)</slot>
+    <slot>set_isoline_count(int)</slot>
+    <slot>enable_bounded_isolines(int)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -1376,6 +1462,70 @@
     <hint type="destinationlabel">
      <x>621</x>
      <y>397</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>boundedIsolineBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>enable_bounded_isolines(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>552</x>
+     <y>381</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lowerThresholdBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_lower_isoline(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>547</x>
+     <y>435</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>upperThresholdBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_upper_isoline(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>547</x>
+     <y>405</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>isolineCountBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_isoline_count(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>567</x>
+     <y>465</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>138</y>
     </hint>
    </hints>
   </connection>

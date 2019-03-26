@@ -39,6 +39,11 @@ public slots:
     void enable_isolines(int status);
     void set_isolines(double value);
 
+    void set_upper_isoline(double value);
+    void set_lower_isoline(double value);
+    void set_isoline_count(int value);
+    void enable_bounded_isolines(int status);
+
 signals:
     void trigger_colormap();
     void update_min_box(double min);

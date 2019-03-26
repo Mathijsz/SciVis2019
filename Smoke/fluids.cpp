@@ -42,7 +42,13 @@ bool enable_bands = false;
 bool autoscale_colormaps = false;
 bool enable_isolines = false;
 bool enable_repeats = false;
+bool enable_bounded_isolines = false;
+
 float isoline = 0.5;
+float upper_isoline = 0.75;
+float lower_isoline = 0.25;
+int isoline_count = 2;
+
 int bands = 2;
 int repeat_levels = 1;
 float min_col = 0.0;
@@ -441,10 +447,13 @@ float value_to_coord(float a, float b, float c)
     return fabs(c - a) / fabs(b - a);
 }
 
-void draw_isolines(fftw_real hn, fftw_real wn)
+void draw_isolines(fftw_real hn, fftw_real wn, float isoline_value)
 {
     int i, j, k;
+    float R, G, B;
     glBegin(GL_LINES);
+    (get_color_func((colormap)scalar_col))(rescale(isoline_value), &R, &G, &B);
+    glColor3f(R, G, B);
     fftw_real points[4];
     for (i = 0; i < DIM_X - 1; i++) {
 
@@ -453,12 +462,11 @@ void draw_isolines(fftw_real hn, fftw_real wn)
 
         for (j = 0; j < DIM_Y - 1; j++)
         {
-            glColor3f(1,1,1);
             unsigned char code = 0;
             points[1] = get_data_interpol(&get_vis_data, j+1,   i);
             points[2] = get_data_interpol(&get_vis_data, j+1,   i+1);
             for (k = 0; k < 4; k++) {
-                if (points[k] > isoline)
+                if (points[k] > isoline_value)
                     code += pow(2, k);
             }
             std::vector<float> vertex_x;
@@ -468,55 +476,55 @@ void draw_isolines(fftw_real hn, fftw_real wn)
             case 1:
             case 14:
                 vertex_x.push_back(j);
-                vertex_y.push_back(i + value_to_coord(points[0], points[3], isoline));
-                vertex_x.push_back(j + value_to_coord(points[0], points[1], isoline));
+                vertex_y.push_back(i + value_to_coord(points[0], points[3], isoline_value));
+                vertex_x.push_back(j + value_to_coord(points[0], points[1], isoline_value));
                 vertex_y.push_back(i);
                 break;
             case 2:
             case 13:
-                vertex_x.push_back(j + value_to_coord(points[0], points[1], isoline));
+                vertex_x.push_back(j + value_to_coord(points[0], points[1], isoline_value));
                 vertex_y.push_back(i);
                 vertex_x.push_back(j+1);
-                vertex_y.push_back(i + value_to_coord(points[1], points[2], isoline));
+                vertex_y.push_back(i + value_to_coord(points[1], points[2], isoline_value));
                 break;
             case 3:
             case 12:
                 vertex_x.push_back(j);
-                vertex_y.push_back(i + value_to_coord(points[0], points[3], isoline));
+                vertex_y.push_back(i + value_to_coord(points[0], points[3], isoline_value));
                 vertex_x.push_back(j+1);
-                vertex_y.push_back(i + value_to_coord(points[1], points[2], isoline));
+                vertex_y.push_back(i + value_to_coord(points[1], points[2], isoline_value));
                 break;
             case 4:
             case 11:
                 vertex_x.push_back(j + 1);
-                vertex_y.push_back(i + value_to_coord(points[1], points[2], isoline));
-                vertex_x.push_back(j + value_to_coord(points[3], points[2], isoline));
+                vertex_y.push_back(i + value_to_coord(points[1], points[2], isoline_value));
+                vertex_x.push_back(j + value_to_coord(points[3], points[2], isoline_value));
                 vertex_y.push_back(i + 1);
                 break;
             case 5:
             case 10:
-                vertex_x.push_back(j + value_to_coord(points[0], points[1], isoline));
+                vertex_x.push_back(j + value_to_coord(points[0], points[1], isoline_value));
                 vertex_y.push_back(i);
                 vertex_x.push_back(j);
-                vertex_y.push_back(i + value_to_coord(points[0], points[3], isoline));
+                vertex_y.push_back(i + value_to_coord(points[0], points[3], isoline_value));
 
                 vertex_x.push_back(j + 1);
-                vertex_y.push_back(i + value_to_coord(points[1], points[2], isoline));
-                vertex_x.push_back(j + value_to_coord(points[3], points[2], isoline));
+                vertex_y.push_back(i + value_to_coord(points[1], points[2], isoline_value));
+                vertex_x.push_back(j + value_to_coord(points[3], points[2], isoline_value));
                 vertex_y.push_back(i + 1);
                 break;
             case 6:
             case 9:
-                vertex_x.push_back(j + value_to_coord(points[0], points[1], isoline));
+                vertex_x.push_back(j + value_to_coord(points[0], points[1], isoline_value));
                 vertex_y.push_back(i);
-                vertex_x.push_back(j + value_to_coord(points[3], points[2], isoline));
+                vertex_x.push_back(j + value_to_coord(points[3], points[2], isoline_value));
                 vertex_y.push_back(i + 1);
                 break;
             case 7:
             case 8:
                 vertex_x.push_back(j);
-                vertex_y.push_back(i + value_to_coord(points[0], points[3], isoline));
-                vertex_x.push_back(j + value_to_coord(points[3], points[2], isoline));
+                vertex_y.push_back(i + value_to_coord(points[0], points[3], isoline_value));
+                vertex_x.push_back(j + value_to_coord(points[3], points[2], isoline_value));
                 vertex_y.push_back(i + 1);
                 break;
             }
@@ -656,9 +664,12 @@ void visualize(void)
         }
     }
 
-    if (enable_isolines) {
-        draw_isolines(hn, wn);
-    }
+    if (enable_isolines)
+        draw_isolines(hn, wn, isoline);
+
+    if (enable_bounded_isolines && lower_isoline < upper_isoline)
+        for (float l = lower_isoline; l <= upper_isoline; l += (upper_isoline - lower_isoline)/(isoline_count-1))
+            draw_isolines(hn, wn, l);
 
 }
 
