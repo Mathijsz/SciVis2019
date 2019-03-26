@@ -1,0 +1,1383 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>638</width>
+    <height>514</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Real-time smoke simulation and visualization</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <layout class="QHBoxLayout" name="Visualization">
+      <item>
+       <widget class="SmokeGLWidget" name="smokewidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>500</width>
+          <height>275</height>
+         </size>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::StrongFocus</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QDoubleSpinBox" name="maxSB">
+          <property name="prefix">
+           <string>max: </string>
+          </property>
+          <property name="decimals">
+           <number>3</number>
+          </property>
+          <property name="maximum">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="ColorLegendWidget" name="colorLegend" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>32</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="minSB">
+          <property name="prefix">
+           <string>min: </string>
+          </property>
+          <property name="decimals">
+           <number>3</number>
+          </property>
+          <property name="minimum">
+           <double>-1.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="UpperButtons">
+      <item>
+       <widget class="QCheckBox" name="hedgeHogsCheckBox">
+        <property name="text">
+         <string>Glyphs</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="colorCheckBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::TabFocus</enum>
+        </property>
+        <property name="toolTip">
+         <string>Enable direction coloring</string>
+        </property>
+        <property name="text">
+         <string>Directional glyph color</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="smokeCheckBox">
+        <property name="text">
+         <string>Smoke</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="autoscaleCheckBox">
+        <property name="text">
+         <string>Autoscale</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>550</width>
+        <height>200</height>
+       </size>
+      </property>
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="QWidget" name="colorTab">
+       <attribute name="title">
+        <string>Colors</string>
+       </attribute>
+       <widget class="QWidget" name="layoutWidget">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>638</width>
+          <height>171</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="ColorSettings">
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QGroupBox" name="ColorData">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>60</height>
+              </size>
+             </property>
+             <property name="title">
+              <string>Color data</string>
+             </property>
+             <widget class="QRadioButton" name="colorData_0">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>20</y>
+                <width>120</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Density</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+             <widget class="QRadioButton" name="colorData_1">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>40</y>
+                <width>120</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Fluid Velocity</string>
+              </property>
+             </widget>
+             <widget class="QRadioButton" name="colorData_2">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>60</y>
+                <width>120</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Force field</string>
+              </property>
+             </widget>
+             <widget class="QRadioButton" name="colorData_3">
+              <property name="geometry">
+               <rect>
+                <x>120</x>
+                <y>20</y>
+                <width>120</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Divergence</string>
+              </property>
+             </widget>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="VectorData">
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>50</height>
+              </size>
+             </property>
+             <property name="title">
+              <string>Vector data</string>
+             </property>
+             <widget class="QRadioButton" name="vectorData_1">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>20</y>
+                <width>120</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Fluid Velocity</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+             <widget class="QRadioButton" name="vectorData_2">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>40</y>
+                <width>120</width>
+                <height>22</height>
+               </rect>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>120</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Force field</string>
+              </property>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="Colormap">
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>160</height>
+            </size>
+           </property>
+           <property name="title">
+            <string>Colormap</string>
+           </property>
+           <widget class="QRadioButton" name="radioButton_0">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>20</y>
+              <width>120</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Greyscale</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+           <widget class="QRadioButton" name="radioButton_1">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>80</y>
+              <width>120</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Rainbow</string>
+            </property>
+           </widget>
+           <widget class="QRadioButton" name="radioButton_3">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>60</y>
+              <width>135</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>135</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Blue to white to red</string>
+            </property>
+           </widget>
+           <widget class="QRadioButton" name="radioButton_2">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>40</y>
+              <width>120</width>
+              <height>20</height>
+             </rect>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>20</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Red to white</string>
+            </property>
+           </widget>
+           <widget class="QSpinBox" name="bandsSpinBox">
+            <property name="geometry">
+             <rect>
+              <x>200</x>
+              <y>50</y>
+              <width>81</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="suffix">
+             <string> bands</string>
+            </property>
+            <property name="minimum">
+             <number>2</number>
+            </property>
+            <property name="maximum">
+             <number>128</number>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="bandsCheckBox">
+            <property name="geometry">
+             <rect>
+              <x>290</x>
+              <y>50</y>
+              <width>16</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+           <widget class="QSpinBox" name="colormapRepeatBox">
+            <property name="geometry">
+             <rect>
+              <x>200</x>
+              <y>20</y>
+              <width>81</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="suffix">
+             <string> repeats</string>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>1</number>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="repeatsCheckBox">
+            <property name="geometry">
+             <rect>
+              <x>290</x>
+              <y>20</y>
+              <width>16</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="simTab">
+       <attribute name="title">
+        <string>Simulation</string>
+       </attribute>
+       <widget class="QGroupBox" name="interpolType">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>90</y>
+          <width>313</width>
+          <height>76</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="title">
+         <string>Interpolation</string>
+        </property>
+        <widget class="QRadioButton" name="interpol_0">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>20</y>
+           <width>131</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Nearest neighbor</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="interpol_1">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>40</y>
+           <width>120</width>
+           <height>22</height>
+          </rect>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Bilinear</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="sizeSetings">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>0</y>
+          <width>120</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Size</string>
+        </property>
+        <widget class="QSpinBox" name="simWidth">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>20</y>
+           <width>91</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <property name="prefix">
+          <string>width: </string>
+         </property>
+         <property name="minimum">
+          <number>4</number>
+         </property>
+         <property name="maximum">
+          <number>1000</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+        </widget>
+        <widget class="QSpinBox" name="simHeight">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>50</y>
+           <width>91</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <property name="prefix">
+          <string>height: </string>
+         </property>
+         <property name="minimum">
+          <number>4</number>
+         </property>
+         <property name="maximum">
+          <number>1000</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="glyphSettings">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>0</y>
+          <width>181</width>
+          <height>101</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Glyphs</string>
+        </property>
+        <widget class="QSlider" name="glyphSize">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>23</y>
+           <width>160</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="minimum">
+          <number>100</number>
+         </property>
+         <property name="maximum">
+          <number>2000</number>
+         </property>
+         <property name="singleStep">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>1000</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="glyphShape_0">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>41</y>
+           <width>93</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Hedgehogs</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="glyphShape_1">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>61</y>
+           <width>93</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Cones</string>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="glyphShape_2">
+         <property name="geometry">
+          <rect>
+           <x>110</x>
+           <y>41</y>
+           <width>71</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Arows</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="IsolinesSettings">
+        <property name="geometry">
+         <rect>
+          <x>330</x>
+          <y>0</y>
+          <width>141</width>
+          <height>101</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Isolines</string>
+        </property>
+        <widget class="QDoubleSpinBox" name="isolineSpinBox">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>50</y>
+           <width>111</width>
+           <height>26</height>
+          </rect>
+         </property>
+         <property name="prefix">
+          <string>threshold: </string>
+         </property>
+         <property name="decimals">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <double>1.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
+         <property name="value">
+          <double>0.500000000000000</double>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="isolineCheckBox">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>121</width>
+           <height>17</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Isolines</string>
+         </property>
+        </widget>
+       </widget>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>SmokeGLWidget</class>
+   <extends>QOpenGLWidget</extends>
+   <header>smokeglwidget.h</header>
+   <slots>
+    <signal>trigger_colormap()</signal>
+    <signal>update_min_box(double)</signal>
+    <signal>update_max_box(double)</signal>
+    <slot>set_color(int)</slot>
+    <slot>change_color(bool)</slot>
+    <slot>set_hedgehogs(int)</slot>
+    <slot>set_smoke(int)</slot>
+    <slot>set_bands(int)</slot>
+    <slot>enable_bands(int)</slot>
+    <slot>set_minmax(double)</slot>
+    <slot>set_vector_data(bool)</slot>
+    <slot>set_color_data(bool)</slot>
+    <slot>set_dim_x(int)</slot>
+    <slot>set_dim_y(int)</slot>
+    <slot>set_interpol_type(bool)</slot>
+    <slot>set_glyph_scale(int)</slot>
+    <slot>set_glyph_shape(bool)</slot>
+    <slot>set_autoscale_colormap(int)</slot>
+    <slot>set_isolines(double)</slot>
+    <slot>enable_isolines(int)</slot>
+    <slot>set_repeat_levels(int)</slot>
+    <slot>enable_repeats(int)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>ColorLegendWidget</class>
+   <extends>QWidget</extends>
+   <header>colorlegendwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>colorCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_color(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>14</x>
+     <y>361</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>91</x>
+     <y>310</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>change_color(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>384</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>318</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>change_color(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>464</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>318</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_0</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>change_color(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>364</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>318</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioButton_3</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>change_color(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>76</x>
+     <y>444</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>318</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hedgeHogsCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_hedgehogs(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>104</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>318</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>smokeCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_smoke(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>317</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>318</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bandsSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_bands(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>197</x>
+     <y>364</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bandsSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>colorLegend</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>57</x>
+     <y>474</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>620</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bandsCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>enable_bands(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>132</x>
+     <y>479</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bandsCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>colorLegend</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>132</x>
+     <y>479</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>620</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>maxSB</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_minmax(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>593</x>
+     <y>15</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>minSB</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_minmax(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>593</x>
+     <y>286</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>smokewidget</sender>
+   <signal>trigger_colormap()</signal>
+   <receiver>colorLegend</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>272</x>
+     <y>150</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>593</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorData_0</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_color_data(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>61</x>
+     <y>377</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorData_1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_color_data(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>61</x>
+     <y>397</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>vectorData_1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_vector_data(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>61</x>
+     <y>459</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>vectorData_2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_vector_data(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>61</x>
+     <y>479</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>simHeight</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_dim_y(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>52</x>
+     <y>391</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>simWidth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_dim_x(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>52</x>
+     <y>361</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>interpol_0</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_interpol_type(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>77</x>
+     <y>438</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>interpol_1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_interpol_type(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>71</x>
+     <y>458</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>glyphSize</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_glyph_scale(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>370</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>glyphShape_0</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_glyph_shape(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>198</x>
+     <y>384</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>glyphShape_1</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_glyph_shape(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>198</x>
+     <y>404</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>glyphShape_2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_glyph_shape(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>287</x>
+     <y>384</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorData_3</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_color_data(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>183</x>
+     <y>375</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>autoscaleCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_autoscale_colormap(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>559</x>
+     <y>295</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>smokewidget</sender>
+   <signal>update_max_box(double)</signal>
+   <receiver>maxSB</receiver>
+   <slot>setValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>593</x>
+     <y>14</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>smokewidget</sender>
+   <signal>update_min_box(double)</signal>
+   <receiver>minSB</receiver>
+   <slot>setValue(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>272</x>
+     <y>138</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>593</x>
+     <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorData_2</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_color_data(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>63</x>
+     <y>415</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>isolineSpinBox</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_isolines(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>372</x>
+     <y>385</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>isolineCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>enable_isolines(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>336</x>
+     <y>295</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colormapRepeatBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_repeat_levels(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>564</x>
+     <y>367</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>141</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>repeatsCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>enable_repeats(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>621</x>
+     <y>367</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>141</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bandsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>repeatsCheckBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>621</x>
+     <y>397</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>621</x>
+     <y>367</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>repeatsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>bandsCheckBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>621</x>
+     <y>367</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>621</x>
+     <y>397</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
