@@ -168,7 +168,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="colorTab">
        <attribute name="title">
@@ -180,7 +180,7 @@
           <x>0</x>
           <y>0</y>
           <width>638</width>
-          <height>162</height>
+          <height>171</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="ColorSettings">
@@ -191,7 +191,7 @@
              <property name="minimumSize">
               <size>
                <width>100</width>
-               <height>50</height>
+               <height>60</height>
               </size>
              </property>
              <property name="title">
@@ -282,7 +282,7 @@
             <widget class="QGroupBox" name="VectorData">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>90</width>
                <height>50</height>
               </size>
              </property>
@@ -386,30 +386,11 @@
              <string>Rainbow</string>
             </property>
            </widget>
-           <widget class="QRadioButton" name="radioButton_3">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>60</y>
-              <width>120</width>
-              <height>20</height>
-             </rect>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>120</width>
-              <height>20</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Blue to yellow</string>
-            </property>
-           </widget>
            <widget class="QRadioButton" name="radioButton_4">
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>80</y>
+              <y>60</y>
               <width>135</width>
               <height>20</height>
              </rect>
@@ -428,7 +409,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>100</y>
+              <y>80</y>
               <width>120</width>
               <height>20</height>
              </rect>
@@ -446,8 +427,8 @@
            <widget class="QSpinBox" name="bandsSpinBox">
             <property name="geometry">
              <rect>
-              <x>10</x>
-              <y>130</y>
+              <x>200</x>
+              <y>50</y>
               <width>81</width>
               <height>22</height>
              </rect>
@@ -459,20 +440,55 @@
              <number>2</number>
             </property>
             <property name="maximum">
-             <number>255</number>
+             <number>128</number>
             </property>
            </widget>
            <widget class="QCheckBox" name="bandsCheckBox">
             <property name="geometry">
              <rect>
-              <x>90</x>
-              <y>130</y>
-              <width>71</width>
+              <x>290</x>
+              <y>50</y>
+              <width>16</width>
               <height>22</height>
              </rect>
             </property>
             <property name="text">
-             <string>Toggle</string>
+             <string/>
+            </property>
+           </widget>
+           <widget class="QSpinBox" name="colormapRepeatBox">
+            <property name="geometry">
+             <rect>
+              <x>200</x>
+              <y>20</y>
+              <width>81</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="suffix">
+             <string> repeats</string>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>10</number>
+            </property>
+            <property name="value">
+             <number>1</number>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="repeatsCheckBox">
+            <property name="geometry">
+             <rect>
+              <x>290</x>
+              <y>20</y>
+              <width>16</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string/>
             </property>
            </widget>
           </widget>
@@ -752,6 +768,8 @@
     <slot>set_autoscale_colormap(int)</slot>
     <slot>set_isolines(double)</slot>
     <slot>enable_isolines(int)</slot>
+    <slot>set_repeat_levels(int)</slot>
+    <slot>enable_repeats(int)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -852,22 +870,6 @@
     <hint type="sourcelabel">
      <x>104</x>
      <y>317</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>318</x>
-     <y>149</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioButton_3</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>smokewidget</receiver>
-   <slot>change_color(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>76</x>
-     <y>424</y>
     </hint>
     <hint type="destinationlabel">
      <x>318</x>
@@ -1304,6 +1306,70 @@
     <hint type="destinationlabel">
      <x>268</x>
      <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colormapRepeatBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_repeat_levels(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>564</x>
+     <y>367</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>141</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>repeatsCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>enable_repeats(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>621</x>
+     <y>367</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>141</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bandsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>repeatsCheckBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>621</x>
+     <y>397</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>621</x>
+     <y>367</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>repeatsCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>bandsCheckBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>621</x>
+     <y>367</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>621</x>
+     <y>397</y>
     </hint>
    </hints>
   </connection>

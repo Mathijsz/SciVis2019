@@ -23,6 +23,8 @@ public slots:
     void set_smoke(int status);
     void set_bands(int bands);
     void enable_bands(int status);
+    void set_repeat_levels(int repeats);
+    void enable_repeats(int status);
     void set_minmax(double value);
     void set_color_data(bool toggle);
     void set_vector_data(bool toggle);

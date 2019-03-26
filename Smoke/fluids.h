@@ -8,7 +8,6 @@ typedef enum colormap {
     COLOR_BLACKWHITE,
     COLOR_RAINBOW,
     COLOR_RED_TO_WHITE,
-    COLOR_BLUE_TO_YELLOW,
     COLOR_BLUE_TO_RED_VIA_WHITE,
     NUMCOLS
 } colormap;
@@ -42,7 +41,9 @@ namespace fluids {
     extern int draw_vecs;
     extern int enable_smoke;
     extern int bands;
+    extern int repeat_levels;
     extern bool enable_bands;
+    extern bool enable_repeats;
     extern float min_col;
     extern float max_col;
     extern vis_data_type color_data_type;

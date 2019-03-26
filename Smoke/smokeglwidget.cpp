@@ -9,6 +9,7 @@
 #include <QRect>
 #include <QPainter>
 #include <QSpinBox>
+#include <QCheckBox>
 
 SmokeGLWidget::SmokeGLWidget(QWidget *parent)
  : QOpenGLWidget(parent), timer(new QTimer(nullptr))
@@ -106,6 +107,18 @@ void SmokeGLWidget::set_bands(int bands)
 void SmokeGLWidget::enable_bands(int status)
 {
     fluids::enable_bands = (bool)status;
+}
+
+void SmokeGLWidget::set_repeat_levels(int repeats)
+{
+    fluids::repeat_levels = repeats;
+    trigger_colormap();
+}
+
+void SmokeGLWidget::enable_repeats(int status)
+{
+    fluids::enable_repeats = (bool)status;
+    trigger_colormap();
 }
 
 void SmokeGLWidget::set_minmax(double value)

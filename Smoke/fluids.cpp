@@ -41,8 +41,10 @@ int   frozen = 0;               //toggles on/off the animation
 bool enable_bands = false;
 bool autoscale_colormaps = false;
 bool enable_isolines = false;
+bool enable_repeats = false;
 float isoline = 0.5;
 int bands = 2;
+int repeat_levels = 1;
 float min_col = 0.0;
 float max_col = 1.0;
 vis_data_type color_data_type = DENSITY_RHO;
@@ -290,6 +292,11 @@ void with_banding(color_func f, float value, float *R, float *G, float *B, int b
         value = (int)value;
         value /= banding_levels;
     }
+
+    if (enable_repeats) {
+        value = round(fmod(value * repeat_levels, 1));
+    }
+
     (*f)(value, R, G, B);
 }
 
@@ -307,13 +314,6 @@ void blue_to_red_via_white(float value, float *R, float *G, float *B)
     *B = min(1.0, 2 - 2*value);
 }
 
-void blue_to_yellow(float value, float *R, float *G, float *B)
-{
-    *R = max(value-(2/3), 0.0);
-    *G = min(value*3, 1.0);
-    *B = min(1.0, max(0.0, 2-value*3));
-}
-
 void white_to_black(float value, float *R, float *G, float *B)
 {
     *R = *G = *B = value;
@@ -324,8 +324,6 @@ color_func get_color_func(colormap col)
     switch (col) {
         case COLOR_RAINBOW:
              return &rainbow;
-        case COLOR_BLUE_TO_YELLOW:
-             return &blue_to_yellow;
         case COLOR_RED_TO_WHITE:
              return &red_to_white;
         case COLOR_BLUE_TO_RED_VIA_WHITE:
