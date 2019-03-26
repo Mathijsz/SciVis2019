@@ -105,6 +105,13 @@
     <item>
      <layout class="QHBoxLayout" name="UpperButtons">
       <item>
+       <widget class="QCheckBox" name="smokeCheckBox">
+        <property name="text">
+         <string>Smoke</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QCheckBox" name="hedgeHogsCheckBox">
         <property name="text">
          <string>Glyphs</string>
@@ -127,20 +134,6 @@
         </property>
         <property name="text">
          <string>Directional glyph color</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="isolineCheckBox">
-        <property name="text">
-         <string>Isolines</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="smokeCheckBox">
-        <property name="text">
-         <string>Smoke</string>
         </property>
        </widget>
       </item>
@@ -168,7 +161,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="colorTab">
        <attribute name="title">
@@ -222,8 +215,8 @@
              <widget class="QRadioButton" name="colorData_1">
               <property name="geometry">
                <rect>
-                <x>0</x>
-                <y>40</y>
+                <x>120</x>
+                <y>20</y>
                 <width>120</width>
                 <height>22</height>
                </rect>
@@ -241,8 +234,8 @@
              <widget class="QRadioButton" name="colorData_2">
               <property name="geometry">
                <rect>
-                <x>0</x>
-                <y>60</y>
+                <x>120</x>
+                <y>40</y>
                 <width>120</width>
                 <height>22</height>
                </rect>
@@ -260,8 +253,8 @@
              <widget class="QRadioButton" name="colorData_3">
               <property name="geometry">
                <rect>
-                <x>120</x>
-                <y>20</y>
+                <x>0</x>
+                <y>40</y>
                 <width>120</width>
                 <height>22</height>
                </rect>
@@ -371,7 +364,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>40</y>
+              <y>80</y>
               <width>120</width>
               <height>20</height>
              </rect>
@@ -386,7 +379,7 @@
              <string>Rainbow</string>
             </property>
            </widget>
-           <widget class="QRadioButton" name="radioButton_4">
+           <widget class="QRadioButton" name="radioButton_3">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -409,7 +402,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>80</y>
+              <y>40</y>
               <width>120</width>
               <height>20</height>
              </rect>
@@ -713,7 +706,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>30</y>
+           <y>50</y>
            <width>111</width>
            <height>26</height>
           </rect>
@@ -732,6 +725,19 @@
          </property>
          <property name="value">
           <double>0.500000000000000</double>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="isolineCheckBox">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>121</width>
+           <height>17</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Enable Isolines</string>
          </property>
         </widget>
        </widget>
@@ -846,7 +852,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>radioButton_4</sender>
+   <sender>radioButton_3</sender>
    <signal>toggled(bool)</signal>
    <receiver>smokewidget</receiver>
    <slot>change_color(bool)</slot>
