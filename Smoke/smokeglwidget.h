@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
+#include <QVector2D>
+
 class SmokeGLWidget : public QOpenGLWidget, protected QOpenGLFunctions
 {
 Q_OBJECT
@@ -45,6 +47,8 @@ public slots:
     void enable_heightmap(int status);
     void set_height_data(bool toggle);
 
+    void toggle_shading(int status);
+
 signals:
     void trigger_colormap();
     void update_min_box(double min);
@@ -59,10 +63,14 @@ protected:
 
     void mouseMoveEvent(QMouseEvent *event) override;
 
+    void wheelEvent(QWheelEvent *event) override;
+
     void keyPressEvent(QKeyEvent *event) override;
 
 private:
     QTimer *timer;
+    QVector2D last_mouse_pos;
+    bool new_input;
 
 };
 

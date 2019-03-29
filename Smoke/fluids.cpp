@@ -9,6 +9,9 @@
 #include <QOpenGLFunctions>
 #include <QDebug>
 #include <QMatrix4x4>
+#include <QVector>
+#include <QVector2D>
+#include <QVector3D>
 #include "fluids.h"
 
 namespace fluids {
@@ -46,12 +49,15 @@ bool enable_repeats = false;
 bool enable_bounded_isolines = false;
 bool enable_heightmap = false;
 
+bool enable_shading = false;
+
 float isoline = 0.5;
 float upper_isoline = 0.75;
 float lower_isoline = 0.25;
 int isoline_count = 2;
 
-int height_scale = 10;
+int height_scale = 20;
+float streamtube_scale = 0.1;
 
 int bands = 2;
 int repeat_levels = 1;
@@ -63,8 +69,13 @@ vis_data_type heightmap_data_type = DENSITY_RHO;
 interpol_type interpolation = NEAREST_NEIGHBOR;
 glyph_type glyph_shape = HEDGEHOGS;
 
-
 QMatrix4x4 model, view, projection;
+QVector2D last_mouse_pos;
+
+QVector3D lighting;
+QVector3D material;
+QVector<QVector<QVector2D>> streamtubes;
+// {{(x0,y0),{x1,y1)}, }
 
 //------ SIMULATION CODE STARTS HERE -----------------------------------------------------------------
 
@@ -209,6 +220,13 @@ void solve(int n, fftw_real* vx, fftw_real* vy, fftw_real* vx0, fftw_real* vy0, 
                 divd[i+n*j] = dx[((i+1) % n)+n*j] - dx[(i-1+n) % n + n*j] + dy[i+n*((j+1) % n)] - dy[i+n*((j-1+n)%n)];
             }
      }
+
+    for (int t = 0; t < streamtubes.size(); t++) {
+        auto prev = streamtubes[t].last();
+
+        streamtubes[t] += {(float)(prev.y() + streamtube_scale*get_data_interpol(&get_vx_idx, prev.y(), prev.x())),
+                           (float)(prev.x() + streamtube_scale*get_data_interpol(&get_vy_idx, prev.y(), prev.x()))};
+    }
 
 }
 
@@ -386,6 +404,16 @@ fftw_real get_height_data(int idx)
     }
 }
 
+fftw_real get_vx_idx(int idx)
+{
+    return vx[idx];
+}
+
+fftw_real get_vy_idx(int idx)
+{
+    return vy[idx];
+}
+
 fftw_real get_vec_data_x(int idx)
 {
     switch (vector_data_type) {
@@ -477,6 +505,7 @@ void draw_isolines(fftw_real hn, fftw_real wn, float isoline_value)
     (get_color_func((colormap)scalar_col))(rescale(isoline_value), &R, &G, &B);
     glColor3f(R, G, B);
     fftw_real points[4];
+
     for (i = 0; i < DIM_X - 1; i++) {
 
         points[0] = get_data_interpol(&get_vis_data, 0,     i);
@@ -552,7 +581,10 @@ void draw_isolines(fftw_real hn, fftw_real wn, float isoline_value)
             }
 
             for (int l = 0; l < vertex_x.size(); l++) {
-                glVertex2f(wn + (fftw_real)vertex_y[l]*wn, hn + (fftw_real)vertex_x[l]*hn);
+                float py = wn + (fftw_real)vertex_y[l]*wn;
+                float px = hn + (fftw_real)vertex_x[l]*hn;
+                float height = enable_heightmap ? height_scale * get_data_interpol(&get_height_data, py, px) : 0;
+                glVertex3f(py, px, height);
             }
             points[0] = points[1];
             points[3] = points[2];
@@ -568,10 +600,12 @@ void draw_hedgehogs(fftw_real hn, fftw_real wn, float hedge_scale = 1)
     for (i = 0; i < DIM_X; i++)
         for (j = 0; j < DIM_Y; j++)
         {
+
+            float height = enable_heightmap ? height_scale * get_data_interpol(&get_height_data, j, i) : 0;
             direction_to_color(j, i, color_dir);
-            glVertex2f(wn + (fftw_real)i * wn, hn + (fftw_real)j * hn);
-            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * hedge_scale * get_data_interpol(&get_vec_data_x, j, i),
-                       (hn + (fftw_real)j * hn) + vec_scale * hedge_scale * get_data_interpol(&get_vec_data_y, j, i));
+            glVertex3f(wn + (fftw_real)i * wn, hn + (fftw_real)j * hn, height);
+            glVertex3f((wn + (fftw_real)i * wn) + vec_scale * hedge_scale * get_data_interpol(&get_vec_data_x, j, i),
+                       (hn + (fftw_real)j * hn) + vec_scale * hedge_scale * get_data_interpol(&get_vec_data_y, j, i), height);
         }
     glEnd();
 }
@@ -588,12 +622,13 @@ void draw_cones(fftw_real hn, fftw_real wn, float offset = 0)
             direction_to_color(j, i, color_dir);
             fftw_real x = get_data_interpol(&get_vec_data_x, j, i);
             fftw_real y = get_data_interpol(&get_vec_data_y, j, i);
-            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * (x*0.2 + offset * x),
-                       (hn + (fftw_real)j * hn) + vec_scale * (y*0.2 + offset * y));
-            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * (y*0.05 + offset * x),
-                       (hn + (fftw_real)j * hn) + vec_scale * (-x*0.05 + offset * y));
-            glVertex2f((wn + (fftw_real)i * wn) + vec_scale * (-y*0.05 + offset * x),
-                       (hn + (fftw_real)j * hn) + vec_scale * (x*0.05 + offset * y));
+            float height = enable_heightmap ? height_scale * get_data_interpol(&get_height_data, j, i) : 0;
+            glVertex3f((wn + (fftw_real)i * wn) + vec_scale * (x*0.2 + offset * x),
+                       (hn + (fftw_real)j * hn) + vec_scale * (y*0.2 + offset * y), height);
+            glVertex3f((wn + (fftw_real)i * wn) + vec_scale * (y*0.05 + offset * x),
+                       (hn + (fftw_real)j * hn) + vec_scale * (-x*0.05 + offset * y), height);
+            glVertex3f((wn + (fftw_real)i * wn) + vec_scale * (-y*0.05 + offset * x),
+                       (hn + (fftw_real)j * hn) + vec_scale * (x*0.05 + offset * y), height);
         }
     glEnd();
 }
@@ -649,7 +684,6 @@ void draw_smoke(fftw_real hn, fftw_real wn)
             set_colormap(val1);    glVertex3f(px1, py1, h1);
             set_colormap(val2);    glVertex3f(px2, py2, h2);
 
-
             set_colormap(val0);    glVertex3f(px0, py0, h0);
             set_colormap(val2);    glVertex3f(px2, py2, h2);
             set_colormap(val3);    glVertex3f(px3, py3, h3);
@@ -669,6 +703,34 @@ void scale_colormap()
     }
     min_col = current_min;
     max_col = current_max;
+
+}
+
+void draw_mouse(int mx, int my)
+{
+    glBegin(GL_QUADS);
+    glColor3f(1,(float)20/255,(float)147/255);
+    float height = 0.5 + (enable_heightmap ? height_scale * get_data_interpol(&get_height_data, my, mx) : 0);
+    height *= -1;
+    glVertex3f(mx+5, my+5, height);
+    glVertex3f(mx+5, my-5, height);
+    glVertex3f(mx-5, my-5, height);
+    glVertex3f(mx-5, my+5, height);
+    glEnd();
+}
+
+void draw_streamtubes()
+{
+    int points = 20;
+    float radius = 10;
+    for (int t = 0; t < streamtubes.size(); t++) {
+        glBegin(GL_TRIANGLE_STRIP);
+        streamtubes[t];
+        for (int p = 0; p < points; p++) {
+
+        }
+        glEnd();
+    }
 
 }
 
@@ -705,6 +767,8 @@ void visualize(void)
         for (float l = lower_isoline; l <= upper_isoline; l += (upper_isoline - lower_isoline)/(isoline_count-1))
             draw_isolines(hn, wn, l);
 
+    draw_mouse(last_mouse_pos.x(), winHeight- last_mouse_pos.y());
+
 }
 
 
@@ -729,25 +793,21 @@ void display(void)
 //reshape: Handle window resizing (reshaping) events
 void reshape(int w, int h)
 {
-    model.setToIdentity();
-    view.setToIdentity();
-    projection.setToIdentity();
-
+    winWidth = w; winHeight = h;
+    initialize_env();
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    view.lookAt({(float)w/2, -150, 150}, {(float)w/2, (float)h/4, 0}, {0,0,1});
 
     glMultMatrixf((view * model).data());
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    projection.perspective(45, (float)16/9, -10, 10);
+    projection.perspective(60, (float)winWidth/winHeight, -10, 10);
     glMultMatrixf(projection.data());
 //    glOrtho(0.0, (GLdouble)w, 0.0, (GLdouble)h, -10, 50);
     glFrustum(0.0, (GLdouble)w, 0.0, (GLdouble)h, -1, 1);
 
     glViewport(0.0f, 0.0f, (GLfloat)w, (GLfloat)h);
-    winWidth = w; winHeight = h;
 }
 
 //keyboard: Handle key presses
@@ -768,6 +828,7 @@ void keyboard(unsigned char key, int x, int y)
 //			if (draw_vecs==0) draw_smoke = 1; break;
         case 'm': scalar_col++; if (scalar_col>=NUMCOLS) scalar_col=COLOR_BLACKWHITE; break;
         case 'a': frozen = 1-frozen; break;
+        case 'r': initialize_env(); break;
         case 'q': exit(0);
     }
 }
@@ -835,6 +896,60 @@ int main(int argc, char **argv)
     return 0;
 }
 #endif
+
+void initialize_env()
+{
+    model.setToIdentity();
+    view.setToIdentity();
+    projection.setToIdentity();
+    view.lookAt({(float)winWidth/2, (float)winHeight/2, (float)(0.5*sqrt(3)*(winWidth/2)) }, {(float)winWidth/2, (float)winHeight/2, 0}, {0,1,0});
+    lighting = {0,0,300};
+    glEnable(GL_DEPTH_TEST);
+}
+
+void toggle_shading()
+{
+    if (glIsEnabled(GL_LIGHTING)) {
+        glDisable(GL_LIGHTING);
+        glDisable(GL_LIGHT0);
+        return;
+    }
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+
+    float specular[] = {0.1, 0.1, 0.1, 0.1};
+    float shininess[] = {50.0};
+    glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
+    float data[3] = {lighting[0], lighting[1], lighting[2]};
+    glLightfv(GL_LIGHT0, GL_POSITION, data);
+}
+
+void rotate(int dx, int dy)
+{
+    view.translate(winWidth/2, winHeight/2, 0);
+    view.rotate(QQuaternion::fromAxisAndAngle(QVector3D(1, 0, 0), dy));
+    view.rotate(QQuaternion::fromAxisAndAngle(QVector3D(0, 0, 1), dx));
+    view.translate(-winWidth/2,- winHeight/2, 0);
+}
+
+void scale(float scale)
+{
+    view.translate(winWidth/2, winHeight/2, 0);
+    view.scale(scale);
+    view.translate(-winWidth/2,- winHeight/2, 0);
+}
+
+void add_seed_point(int mx, int my)
+{
+    streamtubes += {{(float)mx,(float)my}};
+}
+
+void reset_seed_points()
+{
+    streamtubes.clear();
+}
 
 // End of namespace 'fluids'
 }

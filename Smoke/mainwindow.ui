@@ -103,57 +103,6 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="UpperButtons">
-      <item>
-       <widget class="QCheckBox" name="smokeCheckBox">
-        <property name="text">
-         <string>Smoke</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="hedgeHogsCheckBox">
-        <property name="text">
-         <string>Glyphs</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="colorCheckBox">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::TabFocus</enum>
-        </property>
-        <property name="toolTip">
-         <string>Enable direction coloring</string>
-        </property>
-        <property name="text">
-         <string>Directional glyph color</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="heightmapCheckBox">
-        <property name="text">
-         <string>Heightmap</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="autoscaleCheckBox">
-        <property name="text">
-         <string>Autoscale</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -170,6 +119,101 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
+      <widget class="QWidget" name="miscTab">
+       <attribute name="title">
+        <string>General</string>
+       </attribute>
+       <widget class="QCheckBox" name="smokeCheckBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>116</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Smoke</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="colorCheckBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>50</y>
+          <width>150</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::TabFocus</enum>
+        </property>
+        <property name="toolTip">
+         <string>Enable direction coloring</string>
+        </property>
+        <property name="text">
+         <string>Directional glyph color</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="autoscaleCheckBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>90</y>
+          <width>115</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Autoscale</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="heightmapCheckBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>70</y>
+          <width>116</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Heightmap</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="hedgeHogsCheckBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>30</y>
+          <width>115</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Glyphs</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="shadingCheckBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>110</y>
+          <width>80</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Shading</string>
+        </property>
+       </widget>
+      </widget>
       <widget class="QWidget" name="colorTab">
        <attribute name="title">
         <string>Colors</string>
@@ -991,6 +1035,7 @@
     <slot>enable_bounded_isolines(int)</slot>
     <slot>set_height_data(bool)</slot>
     <slot>enable_heightmap(int)</slot>
+    <slot>toggle_shading(int)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -1735,6 +1780,22 @@
     <hint type="destinationlabel">
      <x>268</x>
      <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>shadingCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>toggle_shading(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>51</x>
+     <y>464</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>268</x>
+     <y>153</y>
     </hint>
    </hints>
   </connection>

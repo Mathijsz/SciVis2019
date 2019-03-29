@@ -12,9 +12,11 @@
 #include <QCheckBox>
 
 SmokeGLWidget::SmokeGLWidget(QWidget *parent)
- : QOpenGLWidget(parent), timer(new QTimer(nullptr))
+ : QOpenGLWidget(parent), timer(new QTimer(nullptr)), last_mouse_pos(0,0), new_input(true)
 {
     fluids::init_simulation(50);
+    fluids::initialize_env();
+    setMouseTracking(true);
     connect(timer, SIGNAL(timeout()), this, SLOT(step()));
     timer->start(17);
 }
@@ -53,12 +55,30 @@ void SmokeGLWidget::step()
         update_min_box(fluids::min_col);
         trigger_colormap();
     }
+    new_input = true;
 }
 
 void SmokeGLWidget::mouseMoveEvent(QMouseEvent *e)
 {
-    if (e->buttons() == Qt::LeftButton)
+    if (e->buttons() == Qt::LeftButton && new_input) {
         fluids::drag(e->x(), e->y());
+        new_input = false;
+        if (e->modifiers() == Qt::KeyboardModifier::ShiftModifier)
+
+    }
+    if (e->buttons() == Qt::RightButton) {
+        int dx = e->x() - last_mouse_pos.x();
+        int dy = e->y() - last_mouse_pos.y();
+        fluids::rotate(dx, dy);
+    }
+    last_mouse_pos.setX(e->x());
+    last_mouse_pos.setY(e->y());
+    fluids::last_mouse_pos = this->last_mouse_pos;
+}
+
+void SmokeGLWidget::wheelEvent(QWheelEvent *e)
+{
+    fluids::scale(e->delta() > 0.0 ? 1.1 : 0.9);
 }
 
 void SmokeGLWidget::keyPressEvent(QKeyEvent *e)
@@ -245,4 +265,9 @@ void SmokeGLWidget::set_height_data(bool toggle)
             qDebug() << "Invalid radio button sender for setting color map";
         trigger_colormap();
     }
+}
+
+void SmokeGLWidget::toggle_shading(int status)
+{
+    fluids::enable_shading = (bool)status;
 }
