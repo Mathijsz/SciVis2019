@@ -708,13 +708,34 @@ void scale_colormap()
 
 void draw_mouse(int mx, int my)
 {
-    glBegin(GL_QUADS);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glBegin(GL_TRIANGLES);
     glColor3f(1,(float)20/255,(float)147/255);
-    float height = 0.5 + (enable_heightmap ? height_scale * get_data_interpol(&get_height_data, my, mx) : 0);
-    glVertex3f(mx+5, my+5, height);
-    glVertex3f(mx+5, my-5, height);
-    glVertex3f(mx-5, my-5, height);
-    glVertex3f(mx-5, my+5, height);
+    float height = 10 + (enable_heightmap ? height_scale * get_data_interpol(&get_height_data, my, mx) : 0.0);
+
+    float x = (float)mx;
+    float y = (float)my;
+    QVector<QVector3D> points = {
+        {x, y, height},
+        {x+5, y+5, height+7.5f},
+        {x-5, y+5, height+7.5f},
+
+        {x, y, height},
+        {x+5, y+5, height+7.5f},
+        {x+5, y-5, height+7.5f},
+
+        {x, y, height},
+        {x-5, y-5, height+7.5f},
+        {x+5, y-5, height+7.5f},
+
+        {x, y, height},
+        {x-5, y-5, height+7.5f},
+        {x-5, y+5, height+7.5f}
+    };
+
+    for (int i = 0; i < points.size(); i++)
+        glVertex3f(points[i].x(), points[i].y(), points[i].z());
+
     glEnd();
 }
 
