@@ -447,17 +447,17 @@ fftw_real get_data_interpol(fftw_real (*f)(int), float y, float x)
     y = (y / DIM_Y) * DIM;
     switch (interpolation) {
         case BILINEAR: {
-            int x1 = floor(x);
-            int y1 = floor(y);
-            int x2 = ceil(x);
-            int y2 = ceil(y);
+            int x1 = floorf(x);
+            int y1 = floorf(y);
+            int x2 = ceilf(x);
+            int y2 = ceilf(y);
             float r1 = get_interpolated_value(f(x1 + DIM * y1), f(x1 + DIM * y2), fmod(y, 1));
             float r2 = get_interpolated_value(f(x2 + DIM * y1), f(x2 + DIM * y2), fmod(y, 1));
             return get_interpolated_value(r1, r2, fmod(x, 1));
         }
         case NEAREST_NEIGHBOR:
         default:
-            return f(round(y) * DIM + round(x));
+            return f(roundf(y) * DIM + roundf(x));
         }
 }
 
@@ -583,13 +583,13 @@ void draw_isolines(fftw_real hn, fftw_real wn, float isoline_value)
             for (int l = 0; l < vertex_x.size(); l++) {
                 float py = wn + (fftw_real)vertex_y[l]*wn;
                 float px = hn + (fftw_real)vertex_x[l]*hn;
-                float height = enable_heightmap ? height_scale * get_data_interpol(&get_height_data, py, px) : 0;
+                float height = enable_heightmap ? height_scale * get_data_interpol(&get_height_data, vertex_x[l], vertex_y[l]) : 0;
                 glVertex3f(py, px, height);
             }
             points[0] = points[1];
             points[3] = points[2];
         }
-        }
+    }
     glEnd();
 }
 
