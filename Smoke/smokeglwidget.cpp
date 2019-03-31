@@ -63,7 +63,7 @@ void SmokeGLWidget::mouseMoveEvent(QMouseEvent *e)
     if (e->buttons() == Qt::LeftButton && new_input) {
         fluids::drag(e->x(), e->y());
         new_input = false;
-        if (e->modifiers() == Qt::KeyboardModifier::ShiftModifier)
+//        if (e->modifiers() == Qt::KeyboardModifier::ShiftModifier)
 
     }
     if (e->buttons() == Qt::RightButton) {
