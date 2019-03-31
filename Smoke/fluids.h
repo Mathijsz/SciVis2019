@@ -74,6 +74,8 @@ namespace fluids {
 
     extern bool enable_shading;
 
+    extern int height_scale;
+
     void init_simulation(int n);
     void destroy_simulation();
     void display(void);

@@ -213,6 +213,53 @@
          <string>Shading</string>
         </property>
        </widget>
+       <widget class="QSlider" name="heightSlider">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>591</x>
+          <y>10</y>
+          <width>22</width>
+          <height>141</height>
+         </rect>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>20</number>
+        </property>
+        <property name="pageStep">
+         <number>5</number>
+        </property>
+        <property name="value">
+         <number>20</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="tickPosition">
+         <enum>QSlider::NoTicks</enum>
+        </property>
+        <property name="tickInterval">
+         <number>0</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>570</x>
+          <y>152</y>
+          <width>61</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Height scale</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="colorTab">
        <attribute name="title">
@@ -1036,6 +1083,7 @@
     <slot>set_height_data(bool)</slot>
     <slot>enable_heightmap(int)</slot>
     <slot>toggle_shading(int)</slot>
+    <slot>set_height(int)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -1796,6 +1844,38 @@
     <hint type="destinationlabel">
      <x>268</x>
      <y>153</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heightSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>set_height(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>622</x>
+     <y>425</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>153</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heightmapCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>heightSlider</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>69</x>
+     <y>417</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>622</x>
+     <y>425</y>
     </hint>
    </hints>
   </connection>

@@ -49,6 +49,8 @@ public slots:
 
     void toggle_shading(int status);
 
+    void set_height(int h);
+
 signals:
     void trigger_colormap();
     void update_min_box(double min);

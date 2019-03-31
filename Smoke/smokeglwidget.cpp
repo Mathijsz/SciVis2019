@@ -271,3 +271,8 @@ void SmokeGLWidget::toggle_shading(int status)
 {
     fluids::enable_shading = (bool)status;
 }
+
+void SmokeGLWidget::set_height(int h)
+{
+    fluids::height_scale = h;
+}
