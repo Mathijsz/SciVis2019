@@ -711,7 +711,6 @@ void draw_mouse(int mx, int my)
     glBegin(GL_QUADS);
     glColor3f(1,(float)20/255,(float)147/255);
     float height = 0.5 + (enable_heightmap ? height_scale * get_data_interpol(&get_height_data, my, mx) : 0);
-    height *= -1;
     glVertex3f(mx+5, my+5, height);
     glVertex3f(mx+5, my-5, height);
     glVertex3f(mx-5, my-5, height);
@@ -905,6 +904,10 @@ void initialize_env()
     view.lookAt({(float)winWidth/2, (float)winHeight/2, (float)(0.5*sqrt(3)*(winWidth/2)) }, {(float)winWidth/2, (float)winHeight/2, 0}, {0,1,0});
     lighting = {0,0,300};
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glDepthMask(GL_TRUE);
+    glDepthRange(1, -1);
+    glClearDepth(1.0);
 }
 
 void toggle_shading()

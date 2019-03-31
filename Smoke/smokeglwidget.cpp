@@ -15,7 +15,6 @@ SmokeGLWidget::SmokeGLWidget(QWidget *parent)
  : QOpenGLWidget(parent), timer(new QTimer(nullptr)), last_mouse_pos(0,0), new_input(true)
 {
     fluids::init_simulation(50);
-    fluids::initialize_env();
     setMouseTracking(true);
     connect(timer, SIGNAL(timeout()), this, SLOT(step()));
     timer->start(17);
@@ -30,6 +29,7 @@ SmokeGLWidget::~SmokeGLWidget()
 void SmokeGLWidget::initializeGL()
 {
     initializeOpenGLFunctions();
+    fluids::initialize_env();
     qDebug() << "Using OpenGL"
              << reinterpret_cast<const char *>(glGetString(GL_VERSION))
              << "on"
