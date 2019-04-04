@@ -830,6 +830,25 @@ void reshape(int w, int h)
     glViewport(0.0f, 0.0f, (GLfloat)w, (GLfloat)h);
 }
 
+void reset_viewpoint()
+{
+    model.setToIdentity();
+    view.setToIdentity();
+    projection.setToIdentity();
+    view.lookAt({(float)winWidth/2, (float)winHeight/2, (float)((winHeight/2)/(sqrt(3)/3)) }, {(float)winWidth/2, (float)winHeight/2, 0}, {0,1,0});
+    lighting = {0,0,300};
+}
+
+void initialize_env()
+{
+    reset_viewpoint();
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glDepthMask(GL_TRUE);
+    glDepthRange(1, -1);
+    glClearDepth(1.0);
+}
+
 //keyboard: Handle key presses
 void keyboard(unsigned char key, int x, int y)
 {
@@ -848,7 +867,7 @@ void keyboard(unsigned char key, int x, int y)
 //			if (draw_vecs==0) draw_smoke = 1; break;
         case 'm': scalar_col++; if (scalar_col>=NUMCOLS) scalar_col=COLOR_BLACKWHITE; break;
         case 'a': frozen = 1-frozen; break;
-        case 'r': initialize_env(); break;
+        case 'r': reset_viewpoint(); break;
         case 'q': exit(0);
     }
 }
@@ -916,20 +935,6 @@ int main(int argc, char **argv)
     return 0;
 }
 #endif
-
-void initialize_env()
-{
-    model.setToIdentity();
-    view.setToIdentity();
-    projection.setToIdentity();
-    view.lookAt({(float)winWidth/2, (float)winHeight/2, (float)(0.5*sqrt(3)*(winWidth/2)) }, {(float)winWidth/2, (float)winHeight/2, 0}, {0,1,0});
-    lighting = {0,0,300};
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-    glDepthMask(GL_TRUE);
-    glDepthRange(1, -1);
-    glClearDepth(1.0);
-}
 
 void toggle_shading()
 {
