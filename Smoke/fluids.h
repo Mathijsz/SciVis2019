@@ -78,7 +78,7 @@ namespace fluids {
 
     void init_simulation(int n);
     void destroy_simulation();
-    void display(void);
+    void display(int dimx, int dimy);
     void reshape(int w, int h);
     void do_one_simulation_step(void);
     void drag(int mx, int my);
@@ -90,12 +90,14 @@ namespace fluids {
     void add_seed_point(int mx, int my);
     void reset_seed_points();
 
+    void toggle_shading();
+
     void with_banding(color_func f, float value, float* R,float* G,float* B, int levels);
     color_func get_color_func(colormap col);
 
     fftw_real get_vx_idx(int idx);
     fftw_real get_vy_idx(int idx);
-    fftw_real get_data_interpol(fftw_real (*f)(int), float y, float x);
+    fftw_real get_data_interpol(fftw_real (*f)(int), float y, float x, int dimx, int dimy);
 }
 
 #endif // FLUIDS_H

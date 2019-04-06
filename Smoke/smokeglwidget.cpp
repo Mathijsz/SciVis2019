@@ -43,7 +43,7 @@ void SmokeGLWidget::resizeGL(int w, int h)
 
 void SmokeGLWidget::paintGL()
 {
-    fluids::display();
+    fluids::display(fluids::DIM_X, fluids::DIM_Y);
 }
 
 void SmokeGLWidget::step()
@@ -270,6 +270,7 @@ void SmokeGLWidget::set_height_data(bool toggle)
 void SmokeGLWidget::toggle_shading(int status)
 {
     fluids::enable_shading = (bool)status;
+    fluids::toggle_shading();
 }
 
 void SmokeGLWidget::set_height(int h)

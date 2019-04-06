@@ -224,8 +224,8 @@ void solve(int n, fftw_real* vx, fftw_real* vy, fftw_real* vx0, fftw_real* vy0, 
     for (int t = 0; t < streamtubes.size(); t++) {
         auto prev = streamtubes[t].last();
 
-        streamtubes[t] += {(float)(prev.y() + streamtube_scale*get_data_interpol(&get_vx_idx, prev.y(), prev.x())),
-                           (float)(prev.x() + streamtube_scale*get_data_interpol(&get_vy_idx, prev.y(), prev.x()))};
+        streamtubes[t] += {(float)(prev.y() + streamtube_scale*get_data_interpol(&get_vx_idx, prev.y(), prev.x(), DIM_X, DIM_Y)),
+                           (float)(prev.x() + streamtube_scale*get_data_interpol(&get_vy_idx, prev.y(), prev.x(), DIM_X, DIM_Y))};
     }
 
 }
@@ -374,6 +374,14 @@ void set_colormap(float vy)
     glColor3f(R,G,B);
 }
 
+QVector3D get_color(float vy)
+{
+    float R,G,B;
+    color_func f = get_color_func((colormap)scalar_col);
+    with_banding(f, vy, &R, &G, &B, bands);
+    return {R, G, B};
+}
+
 fftw_real get_vis_data(int idx)
 {
     switch (color_data_type) {
@@ -441,10 +449,10 @@ float get_interpolated_value(float q1, float q2, float dx)
     return (q2 - q1)*dx + q1;
 }
 
-fftw_real get_data_interpol(fftw_real (*f)(int), float y, float x)
+fftw_real get_data_interpol(fftw_real (*f)(int), float y, float x, int dimx, int dimy)
 {
-    x = (x / DIM_X) * DIM;
-    y = (y / DIM_Y) * DIM;
+    x = (x / dimx) * DIM;
+    y = (y / dimy) * DIM;
     switch (interpolation) {
         case BILINEAR: {
             int x1 = floorf(x);
@@ -464,13 +472,13 @@ fftw_real get_data_interpol(fftw_real (*f)(int), float y, float x)
 //direction_to_color: Set the current color by mapping a direction vector (x,y), using
 //                    the color mapping method 'method'. If method==1, map the vector direction
 //                    using a rainbow colormap. If method==0, simply use the white color
-void direction_to_color(int y, int x, int method)
+void direction_to_color(int y, int x, int method, int dimx, int dimy)
 {
     float r,g,b,f;
     if (method)
     {
-        float val_x = get_data_interpol(&get_vec_data_x, y, x);
-        float val_y = get_data_interpol(&get_vec_data_y, y, x);
+        float val_x = get_data_interpol(&get_vec_data_x, y, x, dimx, dimy);
+        float val_y = get_data_interpol(&get_vec_data_y, y, x, dimx, dimy);
 
         f = atan2(val_y,val_x) / 3.1415927 + 1;
         r = f;
@@ -485,7 +493,7 @@ void direction_to_color(int y, int x, int method)
     else
     {
         color_func func = get_color_func((colormap)scalar_col);
-        with_banding(func, get_data_interpol(&get_vis_data, y, x), &r, &g, &b, bands);
+        with_banding(func, get_data_interpol(&get_vis_data, y, x, dimx, dimy), &r, &g, &b, bands);
     }
     glColor3f(r,g,b);
 }
@@ -497,7 +505,7 @@ float value_to_coord(float a, float b, float c)
     return fabs(c - a) / fabs(b - a);
 }
 
-void draw_isolines(fftw_real hn, fftw_real wn, float isoline_value)
+void draw_isolines(fftw_real hn, fftw_real wn, float isoline_value, int dimx, int dimy)
 {
     int i, j, k;
     float R, G, B;
@@ -506,16 +514,16 @@ void draw_isolines(fftw_real hn, fftw_real wn, float isoline_value)
     glColor3f(R, G, B);
     fftw_real points[4];
 
-    for (i = 0; i < DIM_X - 1; i++) {
+    for (i = 0; i < dimx - 1; i++) {
 
-        points[0] = get_data_interpol(&get_vis_data, 0,     i);
-        points[3] = get_data_interpol(&get_vis_data, 0,     i+1);
+        points[0] = get_data_interpol(&get_vis_data, 0, i, dimx, dimy);
+        points[3] = get_data_interpol(&get_vis_data, 0, i+1, dimx, dimy);
 
-        for (j = 0; j < DIM_Y - 1; j++)
+        for (j = 0; j < dimy - 1; j++)
         {
             unsigned char code = 0;
-            points[1] = get_data_interpol(&get_vis_data, j+1,   i);
-            points[2] = get_data_interpol(&get_vis_data, j+1,   i+1);
+            points[1] = get_data_interpol(&get_vis_data, j+1, i, dimx, dimy);
+            points[2] = get_data_interpol(&get_vis_data, j+1, i+1, dimx, dimy);
             for (k = 0; k < 4; k++) {
                 if (points[k] > isoline_value)
                     code += pow(2, k);
@@ -583,7 +591,7 @@ void draw_isolines(fftw_real hn, fftw_real wn, float isoline_value)
             for (int l = 0; l < vertex_x.size(); l++) {
                 float py = wn + (fftw_real)vertex_y[l]*wn;
                 float px = hn + (fftw_real)vertex_x[l]*hn;
-                float height = enable_heightmap ? height_scale * get_data_interpol(&get_height_data, vertex_x[l], vertex_y[l]) : 0;
+                float height = enable_heightmap ? height_scale * get_data_interpol(&get_height_data, vertex_x[l], vertex_y[l], dimx, dimy) : 0;
                 glVertex3f(py, px, height);
             }
             points[0] = points[1];
@@ -593,36 +601,36 @@ void draw_isolines(fftw_real hn, fftw_real wn, float isoline_value)
     glEnd();
 }
 
-void draw_hedgehogs(fftw_real hn, fftw_real wn, float hedge_scale = 1)
+void draw_hedgehogs(fftw_real hn, fftw_real wn, int dimx, int dimy, float hedge_scale = 1)
 {
     int i, j;
     glBegin(GL_LINES);              //draw velocities
-    for (i = 0; i < DIM_X; i++)
-        for (j = 0; j < DIM_Y; j++)
+    for (i = 0; i < dimx; i++)
+        for (j = 0; j < dimy; j++)
         {
 
-            float height = enable_heightmap ? height_scale * get_data_interpol(&get_height_data, j, i) : 0;
-            direction_to_color(j, i, color_dir);
+            float height = enable_heightmap ? height_scale * get_data_interpol(&get_height_data, j, i, dimx, dimy) : 0;
+            direction_to_color(j, i, color_dir, dimx, dimy);
             glVertex3f(wn + (fftw_real)i * wn, hn + (fftw_real)j * hn, height);
-            glVertex3f((wn + (fftw_real)i * wn) + vec_scale * hedge_scale * get_data_interpol(&get_vec_data_x, j, i),
-                       (hn + (fftw_real)j * hn) + vec_scale * hedge_scale * get_data_interpol(&get_vec_data_y, j, i), height);
+            glVertex3f((wn + (fftw_real)i * wn) + vec_scale * hedge_scale * get_data_interpol(&get_vec_data_x, j, i, dimx, dimy),
+                       (hn + (fftw_real)j * hn) + vec_scale * hedge_scale * get_data_interpol(&get_vec_data_y, j, i, dimx, dimy), height);
         }
     glEnd();
 }
 
 
-void draw_cones(fftw_real hn, fftw_real wn, float offset = 0)
+void draw_cones(fftw_real hn, fftw_real wn, int dimx, int dimy, float offset = 0)
 {
     int i, j;
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glBegin(GL_TRIANGLES);
-    for (i = 0; i < DIM_X; i++)
-        for (j = 0; j < DIM_Y; j++)
+    for (i = 0; i < dimx; i++)
+        for (j = 0; j < dimy; j++)
         {
-            direction_to_color(j, i, color_dir);
-            fftw_real x = get_data_interpol(&get_vec_data_x, j, i);
-            fftw_real y = get_data_interpol(&get_vec_data_y, j, i);
-            float height = enable_heightmap ? height_scale * get_data_interpol(&get_height_data, j, i) : 0;
+            direction_to_color(j, i, color_dir, dimx, dimy);
+            fftw_real x = get_data_interpol(&get_vec_data_x, j, i, dimx, dimy);
+            fftw_real y = get_data_interpol(&get_vec_data_y, j, i, dimx, dimy);
+            float height = enable_heightmap ? height_scale * get_data_interpol(&get_height_data, j, i, dimx, dimy) : 0;
             glVertex3f((wn + (fftw_real)i * wn) + vec_scale * (x*0.2 + offset * x),
                        (hn + (fftw_real)j * hn) + vec_scale * (y*0.2 + offset * y), height);
             glVertex3f((wn + (fftw_real)i * wn) + vec_scale * (y*0.05 + offset * x),
@@ -633,64 +641,131 @@ void draw_cones(fftw_real hn, fftw_real wn, float offset = 0)
     glEnd();
 }
 
-void draw_arrows(fftw_real hn, fftw_real wn)
+void draw_arrows(fftw_real hn, fftw_real wn, int dimx, int dimy)
 {
-    draw_hedgehogs(hn, wn, 0.8f);
-    draw_cones(hn, wn, 0.8f);
+    draw_hedgehogs(hn, wn, dimx, dimy,  0.8f);
+    draw_cones(hn, wn, dimx, dimy, 0.8f);
 }
 
-void draw_smoke(fftw_real hn, fftw_real wn)
+void draw_smoke(fftw_real hn, fftw_real wn, int dimx, int dimy)
 {
     int i, j;
     float val0, val1, val2, val3;
     double px0, py0, px1, py1, px2, py2, px3, py3;
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glBegin(GL_TRIANGLES);
-    for (j = 0; j < DIM_Y - 1; j++)            //draw smoke
+    QVector<QVector3D> vertices, surface_normals, vertex_normals, colors;
+
+    int nvertices = (dimx-1)*(dimy-1)*6;
+    vertices.reserve(nvertices);
+    surface_normals.reserve(nvertices/3);
+    vertex_normals.resize(nvertices);
+    colors.reserve(nvertices);
+
+
+    for (j = 0; j < dimy - 1; j++)            //draw smoke
     {
-        for (i = 0; i < DIM_X - 1; i++)
+        for (i = 0; i < dimx - 1; i++)
         {
             px0 = wn + (fftw_real)i * wn;
             py0 = hn + (fftw_real)j * hn;
-            val0 = get_data_interpol(&get_vis_data, j, i);
+            val0 = get_data_interpol(&get_vis_data, j, i, dimx, dimy);
 
 
             px1 = wn + (fftw_real)i * wn;
             py1 = hn + (fftw_real)(j + 1) * hn;
-            val1 = get_data_interpol(&get_vis_data, (j + 1), i);
+            val1 = get_data_interpol(&get_vis_data, (j + 1), i, dimx, dimy);
 
 
             px2 = wn + (fftw_real)(i + 1) * wn;
             py2 = hn + (fftw_real)(j + 1) * hn;
-            val2 = get_data_interpol(&get_vis_data, j + 1, i + 1);
+            val2 = get_data_interpol(&get_vis_data, j + 1, i + 1, dimx, dimy);
 
 
             px3 = wn + (fftw_real)(i + 1) * wn;
             py3 = hn + (fftw_real)j * hn;
-            val3 = get_data_interpol(&get_vis_data, j, i + 1);
+            val3 = get_data_interpol(&get_vis_data, j, i + 1, dimx, dimy);
 
             float h0, h1, h2, h3;
             h0 = h1 = h2 = h3 = 0;
 
             if (enable_heightmap) {
-                h0 = height_scale * get_data_interpol(&get_height_data, j, i);
-                h1 = height_scale * get_data_interpol(&get_height_data, j+1, i);
-                h2 = height_scale * get_data_interpol(&get_height_data, j+1, i+1);
-                h3 = height_scale * get_data_interpol(&get_height_data, j, i+1);
+                h0 = height_scale * get_data_interpol(&get_height_data, j, i, dimx, dimy);
+                h1 = height_scale * get_data_interpol(&get_height_data, j+1, i, dimx, dimy);
+                h2 = height_scale * get_data_interpol(&get_height_data, j+1, i+1, dimx, dimy);
+                h3 = height_scale * get_data_interpol(&get_height_data, j, i+1, dimx, dimy);
 
             }
+            vertices.push_back({(float)px0, (float)py0, (float)h0});
+            vertices.push_back({(float)px1, (float)py1, (float)h1});
+            vertices.push_back({(float)px2, (float)py2, (float)h2});
 
-            set_colormap(val0);    glVertex3f(px0, py0, h0);
-            set_colormap(val1);    glVertex3f(px1, py1, h1);
-            set_colormap(val2);    glVertex3f(px2, py2, h2);
+            surface_normals +=
+                QVector3D::crossProduct(
+                    vertices.end()[-2] - vertices.end()[-3],
+                    vertices.end()[-1] - vertices.end()[-2]
+                ).normalized() * -1;
 
-            set_colormap(val0);    glVertex3f(px0, py0, h0);
-            set_colormap(val2);    glVertex3f(px2, py2, h2);
-            set_colormap(val3);    glVertex3f(px3, py3, h3);
+            vertices.push_back({(float)px0, (float)py0, (float)h0});
+            vertices.push_back({(float)px2, (float)py2, (float)h2});
+            vertices.push_back({(float)px3, (float)py3, (float)h3});
+
+            surface_normals +=
+                QVector3D::crossProduct(
+                    vertices.end()[-2] - vertices.end()[-3],
+                    vertices.end()[-1] - vertices.end()[-2]
+                ).normalized() * -1;
+
+            colors.push_back(get_color(val0));
+            colors.push_back(get_color(val1));
+            colors.push_back(get_color(val2));
+
+            colors.push_back(get_color(val0));
+            colors.push_back(get_color(val2));
+            colors.push_back(get_color(val3));
 
         }
     }
+
+    // Iterate over every lower-left vertex point, then:
+    // - find 6 adjacent face normals
+    // - average them to obtain vertex normal
+    // - put vertex normal at indices that share the same normal.
+    // Indexing logic somewhat convoluted
+
+    int dx = 2*(dimx-1);
+    int dy = dx*(dimy-1);
+
+    for (i = 0; i < surface_normals.size(); i += 2) {
+        QVector3D average = surface_normals[i] + surface_normals[i+1] + surface_normals[i % dx != 0 ? i-1 : i-1+dx];
+        int wrap_idx = i - dx + (i < dx ? dy : 0);
+        average += surface_normals[wrap_idx] + surface_normals[wrap_idx - 1] + surface_normals[wrap_idx - 2];
+        average /= 6;
+        average.normalize();
+
+        int xwrap = i % dx ? i*3 - 1 : i*3 - 1 + 3*dx;
+        vertex_normals[i*3] = average;
+        vertex_normals[i*3 + 3] = average;
+        vertex_normals[xwrap] = average;
+
+        int ywrap = i*3 - 3*dx + 1 + (i < dx ? 3*dy : 0);
+        ywrap = (ywrap + 3*dy) % (3*dy);
+
+        int xwrap_ywrap = ywrap + (i % dx == 0 ? 3*dx : 0);
+
+        vertex_normals[ywrap] = average;
+        vertex_normals[xwrap_ywrap - 3] = average;
+        vertex_normals[xwrap_ywrap - 5] = average;
+
+    }
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glBegin(GL_TRIANGLES);
+    for (i = 0; i < nvertices; i++) {
+        glNormal3f(vertex_normals[i].x(), vertex_normals[i].y(), vertex_normals[i].z());
+        glColor3f(colors[i].x(), colors[i].y(), colors[i].z());
+        glVertex3f(vertices[i].x(), vertices[i].y(), vertices[i].z());
+    }
     glEnd();
+
 }
 
 void scale_colormap()
@@ -706,12 +781,12 @@ void scale_colormap()
 
 }
 
-void draw_mouse(int mx, int my)
+void draw_mouse(int mx, int my, int dimx, int dimy)
 {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glBegin(GL_TRIANGLES);
     glColor3f(1,(float)20/255,(float)147/255);
-    float height = 10 + (enable_heightmap ? height_scale * get_data_interpol(&get_height_data, my, mx) : 0.0);
+    float height = 10 + (enable_heightmap ? height_scale * get_data_interpol(&get_height_data, my, mx, dimx, dimy) : 0.0);
 
     float x = (float)mx;
     float y = (float)my;
@@ -721,20 +796,35 @@ void draw_mouse(int mx, int my)
         {x-5, y+5, height+7.5f},
 
         {x, y, height},
+        {x+5, y-5, height+7.5f},
         {x+5, y+5, height+7.5f},
-        {x+5, y-5, height+7.5f},
 
-        {x, y, height},
         {x-5, y-5, height+7.5f},
         {x+5, y-5, height+7.5f},
-
         {x, y, height},
+
+        {x-5, y+5, height+7.5f},
         {x-5, y-5, height+7.5f},
-        {x-5, y+5, height+7.5f}
+        {x, y, height},
+
+        {x+5, y-5, height+7.5f},
+        {x-5, y+5, height+7.5f},
+        {x+5, y+5, height+7.5f},
+
+        {x-5, y-5, height+7.5f},
+        {x-5, y+5, height+7.5f},
+        {x+5, y-5, height+7.5f}
     };
 
-    for (int i = 0; i < points.size(); i++)
+    QVector<QVector3D> normals;
+    for (int i = 0; i < points.size(); i += 3) {
+        normals += -1 * QVector3D::crossProduct(points[i+1] - points[i], points[i+2] - points[i+1]).normalized();
+    }
+
+    for (int i = 0; i < points.size(); i++) {
+        glNormal3f(normals[i/3].x(), normals[i/3].y(), normals[i/3].z());
         glVertex3f(points[i].x(), points[i].y(), points[i].z());
+    }
 
     glEnd();
 }
@@ -755,39 +845,39 @@ void draw_streamtubes()
 }
 
 //visualize: This is the main visualization function
-void visualize(void)
+void visualize(int dimx, int dimy)
 {
-    fftw_real  wn = (fftw_real)winWidth / (fftw_real)(DIM_X + 1);   // Grid cell width
-    fftw_real  hn = (fftw_real)winHeight / (fftw_real)(DIM_Y + 1);  // Grid cell heigh
+    fftw_real  wn = (fftw_real)winWidth / (fftw_real)(dimx + 1);   // Grid cell width
+    fftw_real  hn = (fftw_real)winHeight / (fftw_real)(dimy + 1);  // Grid cell heigh
 
     if (autoscale_colormaps)
         scale_colormap();
 
     if (enable_smoke)
-        draw_smoke(hn, wn);
+        draw_smoke(hn, wn, dimx, dimy);
 
     if (draw_vecs) {
         switch (glyph_shape) {
             case CONES:
-                draw_cones(hn, wn);
+                draw_cones(hn, wn, dimx, dimy);
                 break;
             case ARROWS:
-                draw_arrows(hn, wn);
+                draw_arrows(hn, wn, dimx, dimy);
                 break;
             case HEDGEHOGS:
             default:
-                draw_hedgehogs(hn, wn);
+                draw_hedgehogs(hn, wn, dimx, dimy);
         }
     }
 
     if (enable_isolines)
-        draw_isolines(hn, wn, isoline);
+        draw_isolines(hn, wn, isoline, dimx, dimy);
 
     if (enable_bounded_isolines && lower_isoline < upper_isoline)
         for (float l = lower_isoline; l <= upper_isoline; l += (upper_isoline - lower_isoline)/(isoline_count-1))
-            draw_isolines(hn, wn, l);
+            draw_isolines(hn, wn, l, dimx, dimy);
 
-    draw_mouse(last_mouse_pos.x(), winHeight- last_mouse_pos.y());
+    draw_mouse(last_mouse_pos.x(), winHeight- last_mouse_pos.y(), dimx, dimy);
 
 }
 
@@ -795,7 +885,7 @@ void visualize(void)
 //------ INTERACTION CODE STARTS HERE -----------------------------------------------------------------
 
 //display: Handle window redrawing events. Simply delegates to visualize().
-void display(void)
+void display(int dimx, int dimy)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -803,11 +893,8 @@ void display(void)
     glLoadIdentity();
     glMultMatrixf((view * model).data());
 
-    visualize();
+    visualize(dimx, dimy);
     glFlush();
-#ifdef USE_GLUT
-    glutSwapBuffers(); // This step is done automatically by Qt
-#endif
 }
 
 //reshape: Handle window resizing (reshaping) events
@@ -847,6 +934,8 @@ void initialize_env()
     glDepthMask(GL_TRUE);
     glDepthRange(1, -1);
     glClearDepth(1.0);
+
+    toggle_shading();
 }
 
 //keyboard: Handle key presses
@@ -938,21 +1027,33 @@ int main(int argc, char **argv)
 
 void toggle_shading()
 {
-    if (glIsEnabled(GL_LIGHTING)) {
-        glDisable(GL_LIGHTING);
-        glDisable(GL_LIGHT0);
+    if (glIsEnabled(GL_LIGHTING))
         return;
-    }
+
     glShadeModel(GL_SMOOTH);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
+    float light_ambient[] = {0.1, 0.1, 0.1, 1.0};
+    float light_diffuse[] = {1.0, 1.0, 1.0, 1.0};
+    float light_specular[] = {1.0, 1.0, 1.0, 1.0};
 
-    float specular[] = {0.1, 0.1, 0.1, 0.1};
-    float shininess[] = {50.0};
-    glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
-    float data[3] = {lighting[0], lighting[1], lighting[2]};
+    float ambient[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    float diffuse[] = {0.1f, 0.5f, 0.7f, 1.0f};
+    float specular[] = {0.8f, 0.6f, 0.7f, 1.0f};
+    float data[4] = {lighting[0], lighting[1], lighting[2], 1.0};
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
     glLightfv(GL_LIGHT0, GL_POSITION, data);
+
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 50.0f);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+
+    glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_NORMALIZE);
 }
 
 void rotate(int dx, int dy)
