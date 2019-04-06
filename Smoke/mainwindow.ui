@@ -297,7 +297,7 @@
              <widget class="QRadioButton" name="colorData_0">
               <property name="geometry">
                <rect>
-                <x>0</x>
+                <x>10</x>
                 <y>20</y>
                 <width>120</width>
                 <height>22</height>
@@ -357,7 +357,7 @@
              <widget class="QRadioButton" name="colorData_3">
               <property name="geometry">
                <rect>
-                <x>0</x>
+                <x>10</x>
                 <y>40</y>
                 <width>120</width>
                 <height>22</height>
@@ -386,7 +386,7 @@
              <property name="minimumSize">
               <size>
                <width>250</width>
-               <height>70</height>
+               <height>96</height>
               </size>
              </property>
              <property name="title">
@@ -395,7 +395,7 @@
              <widget class="QRadioButton" name="vectorData_1">
               <property name="geometry">
                <rect>
-                <x>0</x>
+                <x>10</x>
                 <y>20</y>
                 <width>120</width>
                 <height>22</height>
@@ -417,7 +417,7 @@
              <widget class="QRadioButton" name="vectorData_2">
               <property name="geometry">
                <rect>
-                <x>0</x>
+                <x>10</x>
                 <y>40</y>
                 <width>120</width>
                 <height>22</height>
@@ -440,7 +440,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QGroupBox" name="ColorData_2">
+            <widget class="QGroupBox" name="HeightData">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -459,7 +459,7 @@
              <widget class="QRadioButton" name="heightData_0">
               <property name="geometry">
                <rect>
-                <x>0</x>
+                <x>10</x>
                 <y>20</y>
                 <width>120</width>
                 <height>22</height>
@@ -481,7 +481,7 @@
              <widget class="QRadioButton" name="heightData_1">
               <property name="geometry">
                <rect>
-                <x>120</x>
+                <x>150</x>
                 <y>20</y>
                 <width>120</width>
                 <height>22</height>
@@ -500,7 +500,7 @@
              <widget class="QRadioButton" name="heightData_2">
               <property name="geometry">
                <rect>
-                <x>120</x>
+                <x>150</x>
                 <y>40</y>
                 <width>120</width>
                 <height>22</height>
@@ -519,7 +519,7 @@
              <widget class="QRadioButton" name="heightData_3">
               <property name="geometry">
                <rect>
-                <x>0</x>
+                <x>9</x>
                 <y>40</y>
                 <width>120</width>
                 <height>22</height>
@@ -548,7 +548,7 @@
              <property name="minimumSize">
               <size>
                <width>200</width>
-               <height>100</height>
+               <height>96</height>
               </size>
              </property>
              <property name="title">
@@ -716,8 +716,8 @@
          <rect>
           <x>10</x>
           <y>90</y>
-          <width>313</width>
-          <height>76</height>
+          <width>311</width>
+          <height>81</height>
          </rect>
         </property>
         <property name="minimumSize">
@@ -732,7 +732,7 @@
         <widget class="QRadioButton" name="interpol_0">
          <property name="geometry">
           <rect>
-           <x>0</x>
+           <x>10</x>
            <y>20</y>
            <width>131</width>
            <height>22</height>
@@ -754,7 +754,7 @@
         <widget class="QRadioButton" name="interpol_1">
          <property name="geometry">
           <rect>
-           <x>0</x>
+           <x>10</x>
            <y>40</y>
            <width>120</width>
            <height>22</height>
@@ -776,8 +776,8 @@
          <rect>
           <x>10</x>
           <y>0</y>
-          <width>120</width>
-          <height>80</height>
+          <width>121</width>
+          <height>91</height>
          </rect>
         </property>
         <property name="title">
@@ -786,7 +786,7 @@
         <widget class="QSpinBox" name="simWidth">
          <property name="geometry">
           <rect>
-           <x>0</x>
+           <x>10</x>
            <y>20</y>
            <width>91</width>
            <height>27</height>
@@ -808,7 +808,7 @@
         <widget class="QSpinBox" name="simHeight">
          <property name="geometry">
           <rect>
-           <x>0</x>
+           <x>10</x>
            <y>50</y>
            <width>91</width>
            <height>27</height>
@@ -834,7 +834,7 @@
           <x>140</x>
           <y>0</y>
           <width>181</width>
-          <height>101</height>
+          <height>91</height>
          </rect>
         </property>
         <property name="title">
@@ -914,7 +914,7 @@
           <x>330</x>
           <y>0</y>
           <width>291</width>
-          <height>161</height>
+          <height>171</height>
          </rect>
         </property>
         <property name="title">
@@ -924,7 +924,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>50</y>
+           <y>40</y>
            <width>111</width>
            <height>26</height>
           </rect>
@@ -949,7 +949,7 @@
          <property name="geometry">
           <rect>
            <x>10</x>
-           <y>30</y>
+           <y>20</y>
            <width>121</width>
            <height>17</height>
           </rect>
@@ -962,7 +962,7 @@
          <property name="geometry">
           <rect>
            <x>160</x>
-           <y>50</y>
+           <y>40</y>
            <width>111</width>
            <height>26</height>
           </rect>
@@ -987,7 +987,7 @@
          <property name="geometry">
           <rect>
            <x>160</x>
-           <y>80</y>
+           <y>70</y>
            <width>111</width>
            <height>26</height>
           </rect>
@@ -1012,7 +1012,7 @@
          <property name="geometry">
           <rect>
            <x>200</x>
-           <y>110</y>
+           <y>100</y>
            <width>71</width>
            <height>26</height>
           </rect>
@@ -1031,7 +1031,7 @@
          <property name="geometry">
           <rect>
            <x>160</x>
-           <y>30</y>
+           <y>20</y>
            <width>121</width>
            <height>17</height>
           </rect>
