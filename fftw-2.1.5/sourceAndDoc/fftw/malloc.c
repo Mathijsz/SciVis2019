@@ -27,7 +27,9 @@
 #include <stdlib.h>
 
 #ifdef HAVE_MALLOC_H
+#ifndef __MACH__
 #include <malloc.h>
+#endif
 #endif
 
 fftw_malloc_type_function fftw_malloc_hook = 0;
