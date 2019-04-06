@@ -212,6 +212,9 @@
         <property name="text">
          <string>Shading</string>
         </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
        </widget>
        <widget class="QSlider" name="heightSlider">
         <property name="enabled">

@@ -67,12 +67,12 @@ namespace fluids {
 
     extern bool enable_heightmap;
 
+    extern bool shading;
+
     extern int DIM_X;
     extern int DIM_Y;
 
     extern QVector2D last_mouse_pos;
-
-    extern bool enable_shading;
 
     extern int height_scale;
 
@@ -90,7 +90,7 @@ namespace fluids {
     void add_seed_point(int mx, int my);
     void reset_seed_points();
 
-    void toggle_shading();
+    void enable_shading();
 
     void with_banding(color_func f, float value, float* R,float* G,float* B, int levels);
     color_func get_color_func(colormap col);

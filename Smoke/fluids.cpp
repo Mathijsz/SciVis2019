@@ -49,7 +49,7 @@ bool enable_repeats = false;
 bool enable_bounded_isolines = false;
 bool enable_heightmap = false;
 
-bool enable_shading = false;
+bool shading = true;
 
 float isoline = 0.5;
 float upper_isoline = 0.75;
@@ -893,6 +893,11 @@ void display(int dimx, int dimy)
     glLoadIdentity();
     glMultMatrixf((view * model).data());
 
+    if (!shading && glIsEnabled(GL_LIGHTING))
+        glDisable(GL_LIGHTING);
+    else if (shading && !glIsEnabled(GL_LIGHTING))
+        glEnable(GL_LIGHTING);
+
     visualize(dimx, dimy);
     glFlush();
 }
@@ -934,8 +939,6 @@ void initialize_env()
     glDepthMask(GL_TRUE);
     glDepthRange(1, -1);
     glClearDepth(1.0);
-
-    toggle_shading();
 }
 
 //keyboard: Handle key presses
@@ -1025,11 +1028,8 @@ int main(int argc, char **argv)
 }
 #endif
 
-void toggle_shading()
+void enable_shading()
 {
-    if (glIsEnabled(GL_LIGHTING))
-        return;
-
     glShadeModel(GL_SMOOTH);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);

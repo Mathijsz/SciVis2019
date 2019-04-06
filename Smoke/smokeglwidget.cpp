@@ -30,6 +30,7 @@ void SmokeGLWidget::initializeGL()
 {
     initializeOpenGLFunctions();
     fluids::initialize_env();
+    fluids::enable_shading();
     qDebug() << "Using OpenGL"
              << reinterpret_cast<const char *>(glGetString(GL_VERSION))
              << "on"
@@ -269,8 +270,8 @@ void SmokeGLWidget::set_height_data(bool toggle)
 
 void SmokeGLWidget::toggle_shading(int status)
 {
-    fluids::enable_shading = (bool)status;
-    fluids::toggle_shading();
+    qDebug() << "Shading: " << (bool)status;
+    fluids::shading = (bool)status;
 }
 
 void SmokeGLWidget::set_height(int h)
