@@ -270,7 +270,6 @@ void SmokeGLWidget::set_height_data(bool toggle)
 
 void SmokeGLWidget::toggle_shading(int status)
 {
-    qDebug() << "Shading: " << (bool)status;
     fluids::shading = (bool)status;
 }
 
