@@ -736,8 +736,11 @@ void draw_smoke(fftw_real hn, fftw_real wn, int dimx, int dimy)
 
     for (i = 0; i < surface_normals.size(); i += 2) {
         QVector3D average = surface_normals[i] + surface_normals[i+1] + surface_normals[i % dx != 0 ? i-1 : i-1+dx];
-        int wrap_idx = i - dx + (i < dx ? dy : 0);
-        average += surface_normals[wrap_idx] + surface_normals[wrap_idx - 1] + surface_normals[wrap_idx - 2];
+        int wrap_idx = (i < dx ? i - dx + dy : i - dx);
+        int wrap_hor = (i % dx == 0 ? wrap_idx + dx - 1 : wrap_idx - 1);
+        average += surface_normals[wrap_idx]
+                + surface_normals[wrap_hor]
+                + surface_normals[wrap_hor - 1];
         average /= 6;
         average.normalize();
 
@@ -818,7 +821,9 @@ void draw_mouse(int mx, int my, int dimx, int dimy)
 
     QVector<QVector3D> normals;
     for (int i = 0; i < points.size(); i += 3) {
-        normals += -1 * QVector3D::crossProduct(points[i+1] - points[i], points[i+2] - points[i+1]).normalized();
+        normals += QVector3D::crossProduct(points[i+1] - points[i], points[i+2] - points[i+1]);
+        normals.last() *= -1;
+        normals.last().normalize();
     }
 
     for (int i = 0; i < points.size(); i++) {
