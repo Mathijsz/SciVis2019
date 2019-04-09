@@ -48,6 +48,7 @@ public slots:
     void set_height_data(bool toggle);
 
     void toggle_shading(int status);
+    void reset_view();
 
     void set_height(int h);
 

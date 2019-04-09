@@ -222,17 +222,17 @@
         </property>
         <property name="geometry">
          <rect>
-          <x>591</x>
+          <x>162</x>
           <y>10</y>
           <width>22</width>
-          <height>141</height>
+          <height>121</height>
          </rect>
         </property>
         <property name="minimum">
          <number>1</number>
         </property>
         <property name="maximum">
-         <number>20</number>
+         <number>100</number>
         </property>
         <property name="pageStep">
          <number>5</number>
@@ -253,14 +253,55 @@
        <widget class="QLabel" name="label">
         <property name="geometry">
          <rect>
-          <x>570</x>
-          <y>152</y>
+          <x>141</x>
+          <y>144</y>
           <width>61</width>
           <height>16</height>
          </rect>
         </property>
         <property name="text">
-         <string>Height scale</string>
+         <string>Height scale: </string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="resetViewButton">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>140</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Reset view</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="heightSpinBox">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>206</x>
+          <y>141</y>
+          <width>51</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="frame">
+         <bool>false</bool>
+        </property>
+        <property name="suffix">
+         <string>x</string>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>100</number>
+        </property>
+        <property name="value">
+         <number>20</number>
         </property>
        </widget>
       </widget>
@@ -1087,6 +1128,7 @@
     <slot>enable_heightmap(int)</slot>
     <slot>toggle_shading(int)</slot>
     <slot>set_height(int)</slot>
+    <slot>reset_view()</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -1879,6 +1921,70 @@
     <hint type="destinationlabel">
      <x>622</x>
      <y>425</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resetViewButton</sender>
+   <signal>pressed()</signal>
+   <receiver>smokewidget</receiver>
+   <slot>reset_view()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>49</x>
+     <y>487</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>153</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heightSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>heightSpinBox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>174</x>
+     <y>406</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>233</x>
+     <y>487</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heightSpinBox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>heightSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>233</x>
+     <y>487</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>174</x>
+     <y>406</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heightmapCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>heightSpinBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>69</x>
+     <y>417</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>233</x>
+     <y>487</y>
     </hint>
    </hints>
   </connection>

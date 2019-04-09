@@ -273,6 +273,11 @@ void SmokeGLWidget::toggle_shading(int status)
     fluids::shading = (bool)status;
 }
 
+void SmokeGLWidget::reset_view()
+{
+    fluids::reset_viewpoint();
+}
+
 void SmokeGLWidget::set_height(int h)
 {
     fluids::height_scale = h;

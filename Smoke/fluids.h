@@ -91,6 +91,7 @@ namespace fluids {
     void reset_seed_points();
 
     void enable_shading();
+    void reset_viewpoint();
 
     void with_banding(color_func f, float value, float* R,float* G,float* B, int levels);
     color_func get_color_func(colormap col);
