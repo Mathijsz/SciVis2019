@@ -1,0 +1,55 @@
+Real-time smoke simulation and visualization
+============================================
+This application was developed for the Scientific Visualization course at the University of Groningen.
+It is based on a skeleton program that contained the smoke simulation logic and basic visualization.
+The visualization part is improved upon, while the smoke simulation code is left mostly untouched.
+
+Path (a):
+- Color mapping
+- Glyphs
+- Divergence
+- Isosurfaces
+- Height plots
+- Stream tubes (WIP)
+
+Source code can also be found at: https://github.com/Mathijsz/SciVis2019
+
+
+Runtime requirements
+====================
+These requirements hold for the static builds delivered in this package.
+The binaries carry a static build of Qt5, hence the large file size.
+
+Windows version (Smoke.exe):
+- Windows XP (32-bit) or newer
+
+macOS version (Smoke.app):
+- Sierra (10.12) or newer (older might work but untested)
+
+Linux version (Smoke):
+- A wide range of recent 64-bit distributions should be able to run the supplied binary.
+    At least the following are known to work:
+    * Debian 9.x
+    * Ubuntu 16.04 (used on the LWP computers)
+    * Ubuntu 18.04
+
+For all platforms:
+- Any renderer supporting OpenGL 1.x
+    (Mesa software rendering on llvmpipe and the Apple Software Renderer also both work)
+
+
+Building from source
+====================
+
+Dependencies:
+- Qt 5.4 or newer (the static builds use 5.6.x and 5.12.x for Win/Linux and macOS respectively)
+- Any C++ compiler (g++, MSVC, MinGW, Clang) that works with Qt
+
+The easiest way to build is to open the project file Smoke.pro in Qt Creator and use the GUI to build.
+Press CTRL+R to build and run.
+
+
+Note: the dependency to GLU/GLUT libraries in the original code have been removed.
+
+Note 2: the legacy FFTW-2.1.x library is a subproject within Smoke.pro, and thus will
+    automatically be built and (statically) linked. There is no need to build it separately.
