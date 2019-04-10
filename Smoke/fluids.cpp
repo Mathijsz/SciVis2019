@@ -914,6 +914,22 @@ void draw_streamtubes()
         float h = 0;
         QVector<QVector2D> &tube = streamtubes[t];
 
+        // Draw seed point indicator
+        float th = 0;
+        float s = 360/8;
+        glBegin(GL_TRIANGLES);
+        glColor3f(1.0f, 0.0f, 0.0f);
+        while (th < 360) {
+            glNormal3f(0.0f, 0.0f, 1.0f);
+            glVertex3f(tube[0].x(), tube[0].y(), 0.001);
+            glVertex3f(tube[0].x() + 15 * cosf(th), tube[0].y() + 8 * sinf(th), 0.001);
+            th += s;
+            glVertex3f(tube[0].x() + 15 * cosf(th), tube[0].y() + 8 * sinf(th), 0.001);
+
+        }
+        glEnd();
+
+
         for (int p = 0; p < STREAMTUBE_MAX_SIZE-1; p++) {
             QVector2D &tube_segment = tube[(p + streamtube_pos) % STREAMTUBE_MAX_SIZE];
             QVector2D &next = tube[(p + streamtube_pos + 1) % STREAMTUBE_MAX_SIZE];
