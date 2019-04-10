@@ -19,10 +19,10 @@ Usage instructions
 ==================
 
 The following controls are available in addition to the UI settings:
-- Manipulate simulation:	Jold left mouse button and drag
-- Rotate viewpoint: 		hold right mouse button and move mouse
-- Zoom in/out: 				use the mouse scroll button
-- Add stream tube: 			hold CTRL and click at position to add seed point
+- Manipulate simulation:    hold left mouse button and drag
+- Rotate viewpoint:         hold right mouse button and move mouse
+- Zoom in/out:              use the mouse scroll button
+- Add stream tube:          hold CTRL and click at position to add seed point
 
 
 Runtime requirements
