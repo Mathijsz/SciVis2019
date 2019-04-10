@@ -52,10 +52,14 @@ public slots:
 
     void set_height(int h);
 
+    void enable_streamtubes(int status);
+    void reset_streamtubes();
+
 signals:
     void trigger_colormap();
     void update_min_box(double min);
     void update_max_box(double max);
+    void set_streamtube_count(int count);
 
 protected:
     void initializeGL() override;
@@ -65,6 +69,8 @@ protected:
     void paintGL() override;
 
     void mouseMoveEvent(QMouseEvent *event) override;
+
+    void mousePressEvent(QMouseEvent *event) override;
 
     void wheelEvent(QWheelEvent *event) override;
 

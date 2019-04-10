@@ -65,6 +65,9 @@ namespace fluids {
     extern float lower_isoline;
     extern int isoline_count;
 
+    extern bool enable_streamtubes;
+    extern QVector<QVector<QVector2D>> streamtubes;
+
     extern bool enable_heightmap;
 
     extern bool shading;

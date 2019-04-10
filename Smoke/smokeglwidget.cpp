@@ -64,8 +64,6 @@ void SmokeGLWidget::mouseMoveEvent(QMouseEvent *e)
     if (e->buttons() == Qt::LeftButton && new_input) {
         fluids::drag(e->x(), e->y());
         new_input = false;
-//        if (e->modifiers() == Qt::KeyboardModifier::ShiftModifier)
-
     }
     if (e->buttons() == Qt::RightButton) {
         int dx = e->x() - last_mouse_pos.x();
@@ -75,6 +73,14 @@ void SmokeGLWidget::mouseMoveEvent(QMouseEvent *e)
     last_mouse_pos.setX(e->x());
     last_mouse_pos.setY(e->y());
     fluids::last_mouse_pos = this->last_mouse_pos;
+}
+
+void SmokeGLWidget::mousePressEvent(QMouseEvent *e)
+{
+    if (e->buttons() == Qt::LeftButton && e->modifiers() == Qt::KeyboardModifier::ControlModifier) {
+        fluids::add_seed_point(e->x(), e->y());
+        set_streamtube_count(fluids::streamtubes.size());
+    }
 }
 
 void SmokeGLWidget::wheelEvent(QWheelEvent *e)
@@ -281,4 +287,15 @@ void SmokeGLWidget::reset_view()
 void SmokeGLWidget::set_height(int h)
 {
     fluids::height_scale = h;
+}
+
+void SmokeGLWidget::enable_streamtubes(int status)
+{
+    fluids::enable_streamtubes = (bool)status;
+}
+
+void SmokeGLWidget::reset_streamtubes()
+{
+    fluids::reset_seed_points();
+    set_streamtube_count(fluids::streamtubes.size());
 }

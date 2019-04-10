@@ -760,7 +760,7 @@
          <rect>
           <x>10</x>
           <y>90</y>
-          <width>311</width>
+          <width>121</width>
           <height>81</height>
          </rect>
         </property>
@@ -1085,6 +1085,77 @@
          </property>
         </widget>
        </widget>
+       <widget class="QGroupBox" name="streamtubeSettings">
+        <property name="geometry">
+         <rect>
+          <x>140</x>
+          <y>91</y>
+          <width>181</width>
+          <height>81</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Stream tubes</string>
+        </property>
+        <widget class="QLabel" name="streamtubeLabel">
+         <property name="geometry">
+          <rect>
+           <x>14</x>
+           <y>52</y>
+           <width>101</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Active seed points: </string>
+         </property>
+        </widget>
+        <widget class="QCheckBox" name="streamtubeCheckBox">
+         <property name="geometry">
+          <rect>
+           <x>12</x>
+           <y>23</y>
+           <width>70</width>
+           <height>17</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Draw</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="streamtubeCount">
+         <property name="geometry">
+          <rect>
+           <x>106</x>
+           <y>52</y>
+           <width>16</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="resetTubesButton">
+         <property name="geometry">
+          <rect>
+           <x>130</x>
+           <y>48</y>
+           <width>41</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Reset</string>
+         </property>
+        </widget>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -1101,6 +1172,7 @@
     <signal>trigger_colormap()</signal>
     <signal>update_min_box(double)</signal>
     <signal>update_max_box(double)</signal>
+    <signal>set_streamtube_count(int)</signal>
     <slot>set_color(int)</slot>
     <slot>change_color(bool)</slot>
     <slot>set_hedgehogs(int)</slot>
@@ -1129,6 +1201,8 @@
     <slot>toggle_shading(int)</slot>
     <slot>set_height(int)</slot>
     <slot>reset_view()</slot>
+    <slot>reset_streamtubes()</slot>
+    <slot>enable_streamtubes(int)</slot>
    </slots>
   </customwidget>
   <customwidget>
@@ -1985,6 +2059,54 @@
     <hint type="destinationlabel">
      <x>233</x>
      <y>487</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>smokewidget</sender>
+   <signal>set_streamtube_count(int)</signal>
+   <receiver>streamtubeCount</receiver>
+   <slot>setNum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>274</x>
+     <y>153</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>255</x>
+     <y>486</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resetTubesButton</sender>
+   <signal>pressed()</signal>
+   <receiver>smokewidget</receiver>
+   <slot>reset_streamtubes()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>292</x>
+     <y>486</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>153</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>streamtubeCheckBox</sender>
+   <signal>stateChanged(int)</signal>
+   <receiver>smokewidget</receiver>
+   <slot>enable_streamtubes(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>188</x>
+     <y>458</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>153</y>
     </hint>
    </hints>
   </connection>
