@@ -15,8 +15,19 @@ Path (a):
 Source code can also be found at: https://github.com/Mathijsz/SciVis2019
 
 
+Usage instructions
+==================
+
+The following controls are available in addition to the UI settings:
+- Manipulate simulation:	Jold left mouse button and drag
+- Rotate viewpoint: 		hold right mouse button and move mouse
+- Zoom in/out: 				use the mouse scroll button
+- Add stream tube: 			hold CTRL and click at position to add seed point
+
+
 Runtime requirements
 ====================
+
 These requirements hold for the static builds delivered in this package.
 The binaries carry a static build of Qt5, hence the large file size.
 
