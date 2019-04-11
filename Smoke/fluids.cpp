@@ -49,7 +49,7 @@ bool enable_repeats = false;
 bool enable_bounded_isolines = false;
 bool enable_heightmap = false;
 
-bool shading = true;
+bool shading = false;
 
 float isoline = 0.5;
 float upper_isoline = 0.75;
@@ -1048,7 +1048,7 @@ void reset_viewpoint()
     view.setToIdentity();
     projection.setToIdentity();
     view.lookAt({(float)winWidth/2, (float)winHeight/2, (float)((winHeight/2)/(sqrt(3)/3)) }, {(float)winWidth/2, (float)winHeight/2, 0}, {0,1,0});
-    lighting = {0,0,300};
+    lighting = {500,500,200};
 }
 
 void initialize_env()
