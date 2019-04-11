@@ -75,11 +75,10 @@ QVector3D lighting;
 QVector3D material;
 
 bool enable_streamtubes = true;
-float streamtube_scale = 0.1;
-QVector<QVector<QVector2D>> streamtubes;
-const int STREAMTUBE_MAX_SIZE = 50;
+float streamtube_scale = 0.05;
+QVector<QVector2D> streamtubes;
+const int STREAMTUBE_MAX_SIZE = 100;
 const int STREAMTUBES_NUM_FACES = 8;
-int streamtube_pos = 0;
 // {{(x0,y0),{x1,y1)}, }
 
 //------ SIMULATION CODE STARTS HERE -----------------------------------------------------------------
@@ -224,14 +223,6 @@ void solve(int n, fftw_real* vx, fftw_real* vy, fftw_real* vx0, fftw_real* vy0, 
             for (j = 0; j < n; j++) {
                 divd[i+n*j] = dx[((i+1) % n)+n*j] - dx[(i-1+n) % n + n*j] + dy[i+n*((j+1) % n)] - dy[i+n*((j-1+n)%n)];
             }
-     }
-
-     for (int t = 0; t < streamtubes.size(); t++) {
-         QVector2D prev = streamtubes[t][streamtube_pos];
-         streamtube_pos = (streamtube_pos + 1) % STREAMTUBE_MAX_SIZE;
-         streamtubes[t][streamtube_pos]
-                 = {(float)(prev.x() + streamtube_scale*get_data_interpol(&get_vx_idx, prev.y(), prev.x(), DIM_X, DIM_Y)),
-                    (float)(prev.y() + streamtube_scale*get_data_interpol(&get_vy_idx, prev.y(), prev.x(), DIM_X, DIM_Y))};
      }
 }
 
@@ -843,25 +834,28 @@ void draw_streamtube_segment(QVector2D &current, QVector2D &up,
                              float radius, float radius_up,
                              float h, float height_step)
 {
+    QVector2D c = QVector2D(current.x()/DIM_X * winWidth, current.y()/DIM_Y * winHeight);
+    QVector2D u = QVector2D(up.x()/DIM_X * winWidth, up.y()/DIM_Y * winHeight);
+
     float theta = 0;
     float deg_step = 360.0/STREAMTUBES_NUM_FACES;
 
-    float x = current.x() + radius * cosf(theta);
-    float y = current.y() + radius * sinf(theta);
+    float x = c.x() + radius * cosf(theta);
+    float y = c.y() + radius * sinf(theta);
 
-    float x_up = up.x() + radius_up * cosf(theta);
-    float y_up = up.y() + radius_up * sinf(theta);
+    float x_up = u.x() + radius_up * cosf(theta);
+    float y_up = u.y() + radius_up * sinf(theta);
 
     QVector<QVector3D> vertices;
     QVector<QVector3D> face_normals;
 
     while (theta < 360) {
         theta += deg_step;
-        float x_next = current.x() + radius * cosf(theta);
-        float y_next = current.y() + radius * sinf(theta);
+        float x_next = c.x() + radius * cosf(theta);
+        float y_next = c.y() + radius * sinf(theta);
 
-        float x_up_next = up.x() + radius_up * cosf(theta);
-        float y_up_next = up.y() + radius_up * sinf(theta);
+        float x_up_next = u.x() + radius_up * cosf(theta);
+        float y_up_next = u.y() + radius_up * sinf(theta);
 
         vertices += {
             {x, y, h},
@@ -903,41 +897,65 @@ void draw_streamtube_segment(QVector2D &current, QVector2D &up,
     glEnd();
 }
 
-void draw_streamtubes()
+void draw_streamtubes(float dim_x, float dim_y)
 {
     // Radius value to be set/derived from value from simulation in future
-    float height_step = 2.5;
-    float radius = 10;
+    float height_step = 1;
+    float radius = 12;
 
-    for (int t = 0; t < streamtubes.size(); t++) {
+    for (int st = 0; st < streamtubes.size(); st++) {
 
         float h = 0;
-        QVector<QVector2D> &tube = streamtubes[t];
+        QVector2D seed_point = streamtubes[st];
 
         // Draw seed point indicator
         float th = 0;
         float s = 360/8;
         glBegin(GL_TRIANGLES);
         glColor3f(1.0f, 0.0f, 0.0f);
+
+        float x = seed_point.x() / dim_x * winWidth;
+        float y = seed_point.y() / dim_y * winHeight;
         while (th < 360) {
             glNormal3f(0.0f, 0.0f, 1.0f);
-            glVertex3f(tube[0].x(), tube[0].y(), 0.001);
-            glVertex3f(tube[0].x() + 15 * cosf(th), tube[0].y() + 8 * sinf(th), 0.001);
+            glVertex3f(x, y, 0.001);
+            glVertex3f(x + 15 * cosf(th), y + 8 * sinf(th), 0.001);
             th += s;
-            glVertex3f(tube[0].x() + 15 * cosf(th), tube[0].y() + 8 * sinf(th), 0.001);
+            glVertex3f(x + 15 * cosf(th), y + 8 * sinf(th), 0.001);
 
         }
         glEnd();
 
+        QVector2D prev = seed_point;
+        for (int t = 0; t < STREAMTUBE_MAX_SIZE; t++) {
+            float vx = get_data_interpol(&get_vx_idx, prev.y(), prev.x(), dim_x, dim_y);
+            float vy = get_data_interpol(&get_vy_idx, prev.y(), prev.x(), dim_x, dim_y);
+            float factor = sqrtf(vx*vx + vy*vy);
+            if(factor != 0.001) {
+                vx /= factor;
+                vy /= factor;
+            }
+            float next_x = prev.x() + streamtube_scale*vx;
+            float next_y = prev.y() + streamtube_scale*vy;
 
-        for (int p = 0; p < STREAMTUBE_MAX_SIZE-1; p++) {
-            QVector2D &tube_segment = tube[(p + streamtube_pos) % STREAMTUBE_MAX_SIZE];
-            QVector2D &next = tube[(p + streamtube_pos + 1) % STREAMTUBE_MAX_SIZE];
-            if (next.length() < 0.0001)
+            if (next_x < 0 || next_x >= dim_x || next_y < 0 || next_y >= dim_y) {
                 break;
-            draw_streamtube_segment(tube_segment, next, radius, radius, h, height_step);
-            h += height_step;
+            }
+
+            QVector2D next = QVector2D(next_x, next_y);
+
+            draw_streamtube_segment(prev, next, radius, radius, t*height_step, height_step);
+            prev = next;
         }
+
+//        for (int p = 0; p < STREAMTUBE_MAX_SIZE-1; p++) {
+//            QVector2D &tube_segment = tube[(p + streamtube_pos) % STREAMTUBE_MAX_SIZE];
+//            QVector2D &next = tube[(p + streamtube_pos + 1) % STREAMTUBE_MAX_SIZE];
+//            if (next.length() < 0.0001)
+//                break;
+//            draw_streamtube_segment(tube_segment, next, radius, radius, h, height_step);
+//            h += height_step;
+//        }
 
     }
 
@@ -977,7 +995,7 @@ void visualize(int dimx, int dimy)
             draw_isolines(hn, wn, l, dimx, dimy);
 
     if (enable_streamtubes)
-        draw_streamtubes();
+        draw_streamtubes(dimx, dimy);
 
     draw_mouse(last_mouse_pos.x(), winHeight - last_mouse_pos.y(), dimx, dimy);
 
@@ -1175,14 +1193,12 @@ void scale(float scale)
 
 void add_seed_point(int mx, int my)
 {
-    streamtubes += {{(float)mx,(float)(winHeight - my)}};
-    streamtubes.last().resize(STREAMTUBE_MAX_SIZE);
+    streamtubes += QVector2D((float)mx/winWidth*DIM_X, (float)(winHeight - my)/winHeight*DIM_Y);
 }
 
 void reset_seed_points()
 {
     streamtubes.clear();
-    streamtube_pos = 0;
 }
 
 // End of namespace 'fluids'
