@@ -117,7 +117,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="miscTab">
        <attribute name="title">
@@ -134,6 +134,9 @@
         </property>
         <property name="text">
          <string>Smoke</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
        <widget class="QCheckBox" name="colorCheckBox">
@@ -197,7 +200,7 @@
          <string>Glyphs</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
        <widget class="QCheckBox" name="shadingCheckBox">
@@ -617,7 +620,7 @@
                <string>Greyscale</string>
               </property>
               <property name="checked">
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
              </widget>
              <widget class="QRadioButton" name="radioButton_1">
@@ -637,6 +640,9 @@
               </property>
               <property name="text">
                <string>Rainbow</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
              <widget class="QRadioButton" name="radioButton_3">
@@ -792,7 +798,7 @@
           <string>Nearest neighbor</string>
          </property>
          <property name="checked">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
         <widget class="QRadioButton" name="interpol_1">
@@ -812,6 +818,9 @@
          </property>
          <property name="text">
           <string>Bilinear</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </widget>
@@ -922,7 +931,7 @@
           <string>Hedgehogs</string>
          </property>
          <property name="checked">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
         <widget class="QRadioButton" name="glyphShape_1">
@@ -936,6 +945,9 @@
          </property>
          <property name="text">
           <string>Cones</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
         <widget class="QRadioButton" name="glyphShape_2">

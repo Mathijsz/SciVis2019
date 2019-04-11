@@ -32,14 +32,14 @@ rfftwnd_plan plan_rc, plan_cr;  //simulation domain discretization
 fftw_real *divd;
 
 //--- VISUALIZATION PARAMETERS ---------------------------------------------------------------------
-int   winWidth, winHeight;      //size of the graphics window, in pixels
-int   color_dir = 0;            //use direction color-coding or not
-float vec_scale = 1000;         //scaling of hedgehogs
-int   enable_smoke = 0;           //draw the smoke or not
-int   draw_vecs = 1;            //draw the vector field or not
+int   winWidth, winHeight;        //size of the graphics window, in pixels
+int   color_dir = 0;              //use direction color-coding or not
+float vec_scale = 1000;           //scaling of hedgehogs
+int   enable_smoke = 1;           //draw the smoke or not
+int   draw_vecs = 0;              //draw the vector field or not
 
-int   scalar_col = 0;           //method for scalar coloring
-int   frozen = 0;               //toggles on/off the animation
+int   scalar_col = COLOR_RAINBOW; //method for scalar coloring
+int   frozen = 0;                 //toggles on/off the animation
 
 
 bool enable_bands = false;
@@ -65,8 +65,8 @@ float max_col = 1.0;
 vis_data_type color_data_type = DENSITY_RHO;
 vis_data_type vector_data_type = VELOCITY_V;
 vis_data_type heightmap_data_type = DENSITY_RHO;
-interpol_type interpolation = NEAREST_NEIGHBOR;
-glyph_type glyph_shape = HEDGEHOGS;
+interpol_type interpolation = BILINEAR;
+glyph_type glyph_shape = CONES;
 
 QMatrix4x4 model, view, projection;
 QVector2D last_mouse_pos;
@@ -397,11 +397,11 @@ fftw_real get_height_data(int idx)
 {
     switch (heightmap_data_type) {
         case VELOCITY_V:
-            return sqrt(vx[idx]*vx[idx] + vy[idx]*vy[idx]);
+            return 300*sqrt(vx[idx]*vx[idx] + vy[idx]*vy[idx]);
         case FORCE_FIELD_F:
-            return sqrt(fx[idx]*fx[idx] + fy[idx]*fy[idx]);
+            return 100*sqrt(fx[idx]*fx[idx] + fy[idx]*fy[idx]);
         case DIVERGENCE:
-            return divd[idx];
+            return 1000 * divd[idx];
         case DENSITY_RHO:
         default:
             return rho[idx];
