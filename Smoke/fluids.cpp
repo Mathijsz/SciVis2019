@@ -615,7 +615,7 @@ void draw_hedgehogs(fftw_real hn, fftw_real wn, int dimx, int dimy, float hedge_
 }
 
 
-void draw_cones(fftw_real hn, fftw_real wn, int dimx, int dimy, float offset = 0)
+void draw_cones(fftw_real hn, fftw_real wn, int dimx, int dimy, float offset = 0, float cone_height = 0.2, float cone_width = 0.05)
 {
     int i, j;
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -627,20 +627,20 @@ void draw_cones(fftw_real hn, fftw_real wn, int dimx, int dimy, float offset = 0
             fftw_real x = get_data_interpol(&get_vec_data_x, j, i, dimx, dimy);
             fftw_real y = get_data_interpol(&get_vec_data_y, j, i, dimx, dimy);
             float height = enable_heightmap ? height_scale * get_data_interpol(&get_height_data, j, i, dimx, dimy) : 0;
-            glVertex3f((wn + (fftw_real)i * wn) + vec_scale * (x*0.2 + offset * x),
-                       (hn + (fftw_real)j * hn) + vec_scale * (y*0.2 + offset * y), height);
-            glVertex3f((wn + (fftw_real)i * wn) + vec_scale * (y*0.05 + offset * x),
-                       (hn + (fftw_real)j * hn) + vec_scale * (-x*0.05 + offset * y), height);
-            glVertex3f((wn + (fftw_real)i * wn) + vec_scale * (-y*0.05 + offset * x),
-                       (hn + (fftw_real)j * hn) + vec_scale * (x*0.05 + offset * y), height);
+            glVertex3f((wn + (fftw_real)i * wn) + vec_scale * (x*cone_height + offset * x),
+                       (hn + (fftw_real)j * hn) + vec_scale * (y*cone_height + offset * y), height);
+            glVertex3f((wn + (fftw_real)i * wn) + vec_scale * (y*cone_width + offset * x),
+                       (hn + (fftw_real)j * hn) + vec_scale * (-x*cone_width + offset * y), height);
+            glVertex3f((wn + (fftw_real)i * wn) + vec_scale * (-y*cone_width + offset * x),
+                       (hn + (fftw_real)j * hn) + vec_scale * (x*cone_width + offset * y), height);
         }
     glEnd();
 }
 
 void draw_arrows(fftw_real hn, fftw_real wn, int dimx, int dimy)
 {
-    draw_hedgehogs(hn, wn, dimx, dimy,  0.8f);
-    draw_cones(hn, wn, dimx, dimy, 0.8f);
+    draw_hedgehogs(hn, wn, dimx, dimy,  0.4f);
+    draw_cones(hn, wn, dimx, dimy, 0.4f, 0.25f, 0.1f);
 }
 
 void draw_smoke(fftw_real hn, fftw_real wn, int dimx, int dimy)
