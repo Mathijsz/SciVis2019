@@ -205,7 +205,7 @@ void solve(int n, fftw_real* vx, fftw_real* vy, fftw_real* vx0, fftw_real* vy0, 
        for (j=0;j<n;j++)
        { vx[i+n*j] = f*vx0[i+(n+2)*j]; vy[i+n*j] = f*vy0[i+(n+2)*j]; }
 
-    if (color_data_type == DIVERGENCE) {
+    if (color_data_type == DIVERGENCE || heightmap_data_type == DIVERGENCE) {
         fftw_real *dx = vx;
         fftw_real *dy = vy;
 
